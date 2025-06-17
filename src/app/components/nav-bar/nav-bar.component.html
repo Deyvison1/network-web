@@ -1,0 +1,14 @@
+<nav class="navbar navbar-light bg-light justify-content-between">
+  <div class="container">
+    <a
+      ><strong>{{ nameApplication | uppercase }}</strong></a
+    >
+    <div>
+      <button class="btn btn-outline-primary">Central do Cliente</button>
+      &nbsp;
+      <button (click)="openDialog()" class="btn btn-outline-success">
+        Area Admin
+      </button>
+    </div>
+  </div>
+</nav>

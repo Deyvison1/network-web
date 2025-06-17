@@ -1,0 +1,32 @@
+<mat-card
+  *ngIf="products.length"
+  class="container mt-3 shadow p-3 mb-5 bg-white rounded"
+>
+  <div class="d-flex justify-content-around">
+    <mat-card *ngFor="let product of products" class="mat-card-color p-3">
+      <span
+        ><strong>{{ product.category?.name }}</strong> </span
+      ><br />
+      <div>
+        <span> Download: {{ product.speedDownload + " MB" }} <br /> </span>
+        <span> Upload: {{ product.speedUpload + " MB" }} <br /> </span>
+        <span *ngIf="product.valueWifi"
+          >Wifi: {{ product.valueWifi | currency : "BRL" }}</span
+        >
+        <span *ngIf="!product.valueWifi">Wifi Grátis</span> <br />
+        <span *ngIf="product.taxaAdesao"
+          >Adesão: {{ product.taxaAdesao | currency : "BRL" }}</span
+        >
+        <span *ngIf="!product.taxaAdesao">Sem Taxa de Adesão</span>
+        <br />
+        <span> Valor: {{ product.value | currency : "BRL" }} </span>
+      </div>
+
+      <div class="mt-2">
+        <button class="btn btn-success" (click)="openModalViewQrCode()">
+          Contrate Agora &nbsp;<em class="fa-brands fa-whatsapp"></em>
+        </button>
+      </div>
+    </mat-card>
+  </div>
+</mat-card>

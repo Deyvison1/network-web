@@ -1,0 +1,37 @@
+@if (isLogado()) {
+<div class="text-center">
+  <i class="fa-solid fa-thumbs-up"></i> <br />
+  <h4>Você já esta logado!!</h4>
+  <button (click)="btnEntrar()" class="btn btn-secondary mt-1">
+    <i class="fa-solid fa-screwdriver-wrench ml-2"></i>Ir para area admin
+  </button>
+</div>
+} @else {
+  <app-drag-and-drop [title]="titleDialog"></app-drag-and-drop>
+<mat-dialog-content>
+  <mat-form-field [style.width.%]="100">
+    <mat-label>Login</mat-label>
+    <input
+      matInput
+      id="login"
+      name="login"
+      [(ngModel)]="model.name"
+      placeholder="Login"
+    />
+  </mat-form-field>
+  <mat-form-field [style.width.%]="100">
+    <mat-label>Senha</mat-label>
+    <input
+      matInput
+      id="name"
+      type="password"
+      name="senha"
+      [(ngModel)]="model.senha"
+      placeholder="Senha"
+    />
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-flat-button (click)="verificationLogin()">Logar</button>
+</mat-dialog-actions>
+}
