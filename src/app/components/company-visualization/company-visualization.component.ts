@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input, InputSignal } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ViewQrCodeComponent } from '../view-qr-code/view-qr-code.component';
 import { MatCardModule } from '@angular/material/card';
@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 })
 export class CompanyVisualizationComponent {
   private readonly matDialog = inject(MatDialog);
+  aboutTheCompany: InputSignal<string> = input('');
 
   openModalQrCode() {
     this.matDialog.open(ViewQrCodeComponent, {

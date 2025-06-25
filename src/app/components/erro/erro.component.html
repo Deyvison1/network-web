@@ -1,0 +1,13 @@
+<div class="d-flex justify-content-center">
+  @if (control.hasError('required') && control.touched) {
+  <span class="invalid-feedback">Campo Obrigatorio</span>
+  } @if (control.hasError('minlength') && control.touched) {
+  <span class="invalid-feedback"
+    >Minimo {{ control.errors["minlength"].requiredLength }} caracteres</span
+  >
+  } @if (control.hasError('maxlength') && control.touched) {
+  <span class="invalid-feedback"
+    >Maximo {{ control.errors["maxlength"].requiredLength }} caracteres</span
+  >
+  }
+</div>

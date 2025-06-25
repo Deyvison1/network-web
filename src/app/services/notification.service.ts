@@ -18,6 +18,7 @@ export class NotificationService {
       duration: 5000,
       horizontalPosition: this.horizontalPosition,
       verticalPosition: this.verticalPosition,
+      panelClass: ['green-snackbar']
     });
   }
 

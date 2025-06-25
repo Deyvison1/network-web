@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { DragAndDropComponent } from '../../utils/drag-and-drop/drag-and-drop.component';
+import { DragAndDropComponent } from '../drag-and-drop/drag-and-drop.component';
 
 @Component({
   selector: 'app-delete-dialog',

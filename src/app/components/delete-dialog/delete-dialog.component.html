@@ -1,5 +1,5 @@
-<app-drag-and-drop></app-drag-and-drop>
-<div class="row">
+<app-drag-and-drop (closedDialog)="cancel(false)"></app-drag-and-drop>
+<div class="p-3">
   <h4 class="text-center">Deseja excluir esse registro?</h4>
   <div class="d-flex justify-content-between">
     <button class="btn btn-success" (click)="cancel(true)">Sim</button>

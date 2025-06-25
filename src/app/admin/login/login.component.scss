@@ -2,3 +2,28 @@
     width: 450px;
     height: 200px;
 }
+
+
+
+.green-snackbar {
+    background: rgb(65, 252, 134);
+    color: white;
+}
+.green-snackbar button {
+    background-color: rgb(65, 252, 134);
+    color: white;
+    border: none;
+}
+.red-snackbar {
+    background: #F44336;
+    color: white;
+}
+.red-snackbar button {
+    background-color: #F44336;
+    color: white !important;
+    border: none;
+}
+
+.mr-4 {
+    margin-right: 10px;
+}

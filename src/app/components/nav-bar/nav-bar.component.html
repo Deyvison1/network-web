@@ -5,10 +5,36 @@
     >
     <div>
       <button class="btn btn-outline-primary">Central do Cliente</button>
-      &nbsp;
+      &nbsp; @if (isLoggedIn) {
       <button (click)="openDialog()" class="btn btn-outline-success">
         Area Admin
       </button>
+      }
+    </div>
+    <div>
+      @if (!isLoggedIn) {
+      <button mat-flat-button (click)="openDialog()">
+        <mat-icon>login</mat-icon>
+        <span>Login</span>
+      </button>
+      } @else {
+      <button mat-flat-button [matMenuTriggerFor]="menu">
+        <mat-icon>emoji_people</mat-icon>
+        {{ userName | titlecase }}
+      </button>
+      }
     </div>
   </div>
 </nav>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="redirectionToProfile()">
+    <mat-icon>account_circle</mat-icon>
+    <span>Perfil</span>
+  </button>
+
+  <button mat-menu-item (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    <span>Sair</span>
+  </button>
+</mat-menu>

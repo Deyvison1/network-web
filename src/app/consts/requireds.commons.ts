@@ -11,4 +11,6 @@ export const requiredsCommons = {
     'category',
   ],
   requiredsUser: ['login', 'senha', 'role'],
+  requiredLogin: ['login', 'senha'],
+  requiredRole: ['name', 'sigla']
 };

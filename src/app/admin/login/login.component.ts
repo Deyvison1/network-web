@@ -1,10 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { NotificationService } from '../../services/notification.service';
-import { LocalStorageService } from '../../services/local-storage.service';
 import { RouterService } from '../../services/router.service';
 import { UserAuthService } from '../../services/user-auth.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MatDialogActions,
@@ -14,7 +18,11 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CredenciaisDTO } from '../../models/credentials';
-import { DragAndDropComponent } from "../../utils/drag-and-drop/drag-and-drop.component";
+import { DragAndDropComponent } from '../../components/drag-and-drop/drag-and-drop.component';
+import { FormUtil } from '../../utils/form.utils';
+import { LoginDTO } from '../../models/login.dto';
+import { requiredsCommons } from '../../consts/requireds.commons';
+import { ErroComponent } from '../../components/erro/erro.component';
 
 @Component({
   selector: 'app-login',
@@ -22,34 +30,34 @@ import { DragAndDropComponent } from "../../utils/drag-and-drop/drag-and-drop.co
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
     MatButtonModule,
     MatDialogContent,
     MatDialogActions,
-    DragAndDropComponent
-],
+    DragAndDropComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly dialogRef = inject(MatDialogRef);
-  private readonly localStorageService = inject(LocalStorageService);
   private readonly router = inject(RouterService);
-  private readonly authService = inject(UserAuthService);
+  readonly authService = inject(UserAuthService);
+  private readonly requiredsCommons = requiredsCommons;
+
   titleDialog: string = 'Login';
+  form: FormGroup;
 
-  model: any = {};
-
-  isLogado(): boolean {
-    if (this.localStorageService.getItem('token')) {
-      return true;
-    } else {
-      return false;
-    }
+  ngOnInit(): void {
+    this.form = FormUtil.buildForm(
+      Object.keys(new LoginDTO()),
+      this.requiredsCommons.requiredLogin
+    );
   }
 
   notification(msg: string) {
@@ -59,6 +67,7 @@ export class LoginComponent {
   redirectionTo(router: string) {
     if (router != '') {
       this.router.redirectionTo(router);
+      this.cancel();
     }
   }
 
@@ -71,26 +80,24 @@ export class LoginComponent {
   }
 
   verificationLogin() {
-    const req: CredenciaisDTO = {
-      login: this.model.name,
-      senha: this.model.senha,
-    };
+    const req: LoginDTO = this.form.value;
 
     this.authService.getToken(req).subscribe({
       complete: () => {},
       next: (res) => {
         if (res.token) {
-          this.localStorageService.setItem('token', res.token);
+          localStorage.setItem('token', res.token);
           this.notification('Logado com sucesso.');
           this.redirectionTo('home-admin');
         }
+        this.cancel();
       },
       error: (err) => {
         if (err.status == 401) {
           this.notification('Usuario e(ou) senha invalido.');
         }
+        this.cancel();
       },
     });
-    this.cancel();
   }
 }

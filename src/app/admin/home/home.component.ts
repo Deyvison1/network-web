@@ -3,7 +3,6 @@ import { Component, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterService } from '../../services/router.service';
-import { LocalStorageService } from '../../services/local-storage.service';
 
 @Component({
   selector: 'app-home',
@@ -15,12 +14,11 @@ import { LocalStorageService } from '../../services/local-storage.service';
 export class HomeComponent {
   private readonly matDialog = inject(MatDialog);
   private readonly routerService = inject(RouterService);
-  private readonly localStorageService = inject(LocalStorageService);
 
   totalCategory: string;
 
   sair() {
-    this.localStorageService.clearAll();
+    localStorage.removeItem('token');
     this.routerService.redirectionTo('home');
   }
 

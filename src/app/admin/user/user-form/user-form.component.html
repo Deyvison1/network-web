@@ -1,0 +1,59 @@
+<app-drag-and-drop
+  [title]="title"
+  (closedDialog)="closedDialog()"
+></app-drag-and-drop>
+<form [formGroup]="form" class="p-4">
+  <div class="row">
+    <div class="col">
+      <label for="nome">Nome:</label>
+      <input
+        class="form-control"
+        type="text"
+        minlength="4"
+        formControlName="login"
+        placeholder="Nome"
+      />
+      <app-erro [setControl]="form.get('login')"></app-erro>
+    </div>
+    <div class="col">
+      <label for="senha">{{ labelPassowrd }}:</label>
+      <input
+        class="form-control"
+        type="password"
+        formControlName="senha"
+        [placeholder]="labelPassowrd"
+      />
+      <app-erro [setControl]="form.get('senha')"></app-erro>
+    </div>
+    <div class="row">
+      <div class="col-6">
+        <label for="papel">Papel</label>
+        <select
+          class="form-control"
+          formControlName="role"
+          [compareWith]="compareFn"
+        >
+          <option *ngFor="let role of listRoles" [ngValue]="role.role">
+            {{ role.view }}
+          </option>
+        </select>
+        <app-erro [setControl]="form.get('role')"></app-erro>
+      </div>
+      <div class="col-1 d-flex align-items-end" (click)="openRoleDialog()">
+        <button class="btn btn-primary" matTooltip="Adicionar um papel">
+          <i class="fa-solid fa-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="mt-2 d-flex justify-content-between">
+    <button
+      matTooltip="Salvar"
+      [disabled]="!form.valid"
+      class="btn btn-primary"
+      (click)="save()"
+    >
+      <i class="fa-regular fa-floppy-disk"></i>
+    </button>
+  </div>
+</form>

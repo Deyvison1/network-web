@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-    urlApi: 'https://nwet-work-david.onrender.com'
+    urlApi: 'http://localhost:8080'
   };

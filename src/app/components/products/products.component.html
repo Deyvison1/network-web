@@ -1,32 +1,37 @@
+@if (products.length) {
 <mat-card
-  *ngIf="products.length"
   class="container mt-3 shadow p-3 mb-5 bg-white rounded"
+  style="margin-top: 200px"
 >
   <div class="d-flex justify-content-around">
-    <mat-card *ngFor="let product of products" class="mat-card-color p-3">
+    @for (product of products; track product.id) {
+    <mat-card class="mat-card-color p-3">
       <span
         ><strong>{{ product.category?.name }}</strong> </span
       ><br />
       <div>
         <span> Download: {{ product.speedDownload + " MB" }} <br /> </span>
         <span> Upload: {{ product.speedUpload + " MB" }} <br /> </span>
-        <span *ngIf="product.valueWifi"
-          >Wifi: {{ product.valueWifi | currency : "BRL" }}</span
-        >
-        <span *ngIf="!product.valueWifi">Wifi Grátis</span> <br />
-        <span *ngIf="product.taxaAdesao"
-          >Adesão: {{ product.taxaAdesao | currency : "BRL" }}</span
-        >
-        <span *ngIf="!product.taxaAdesao">Sem Taxa de Adesão</span>
-        <br />
+        @if (product.valueWifi) {
+        <span>Wifi: {{ product.valueWifi | currency : "BRL" }} <br /></span>
+        } @if (!product.valueWifi) {
+        <span>Wifi Grátis <br></span>
+        } @if (product.taxaAdesao) {
+        <span>Adesão: {{ product.taxaAdesao | currency : "BRL" }} <br /></span>
+        } @if (!product.taxaAdesao) {
+        <span>Sem Taxa de Adesão</span>
         <span> Valor: {{ product.value | currency : "BRL" }} </span>
+        }
+        <br />
+        <br />
       </div>
-
-      <div class="mt-2">
+      <div >
         <button class="btn btn-success" (click)="openModalViewQrCode()">
           Contrate Agora &nbsp;<em class="fa-brands fa-whatsapp"></em>
         </button>
       </div>
     </mat-card>
+    }
   </div>
 </mat-card>
+}

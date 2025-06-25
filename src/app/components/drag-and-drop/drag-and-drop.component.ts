@@ -8,6 +8,7 @@ import {
   Component,
   inject,
   input,
+  output,
   TemplateRef,
   ViewChild,
   ViewContainerRef,
@@ -27,6 +28,8 @@ export class DragAndDropComponent {
   @ViewChild(TemplateRef) _dialogTemplate: TemplateRef<any>;
   private _overlayRef: OverlayRef;
   private _portal: TemplatePortal;
+
+  closedDialog = output<void>();
 
   ngAfterViewInit() {
     this._portal = new TemplatePortal(
@@ -50,5 +53,9 @@ export class DragAndDropComponent {
 
   openDialog() {
     this._overlayRef.attach(this._portal);
+  }
+
+  closeDialog() {
+    this.closedDialog.emit();
   }
 }

@@ -1,17 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { DragAndDropComponent } from '../../utils/drag-and-drop/drag-and-drop.component';
-import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserDTO } from '../../models/user.dto';
 import { UserAuthService } from '../../services/user-auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { MatDialog } from '@angular/material/dialog';
-import { FormUtil } from '../../utils/form.utils';
-import { requiredsCommons } from '../../consts/requireds.commons';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatSort, Sort, MatSortModule } from '@angular/material/sort';
-import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { Sort, MatSortModule, MatSort } from '@angular/material/sort';
 import { DeleteDialogComponent } from '../../components/delete-dialog/delete-dialog.component';
+import { MatCardModule } from '@angular/material/card';
+import { UserFormComponent } from './user-form/user-form.component';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import PageConfig from '../../models/interfaces/page.config';
+import { pageCommons } from '../../consts/page.commons';
+import { AuthRoleDirective } from '../../directives/auth-role.directive';
 
 @Component({
   selector: 'app-user',
@@ -20,9 +22,11 @@ import { DeleteDialogComponent } from '../../components/delete-dialog/delete-dia
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    DragAndDropComponent,
     MatTableModule,
-    MatSortModule
+    MatSortModule,
+    MatCardModule,
+    MatPaginatorModule,
+    AuthRoleDirective,
   ],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss',
@@ -30,15 +34,21 @@ import { DeleteDialogComponent } from '../../components/delete-dialog/delete-dia
 export class UserComponent implements OnInit {
   private readonly userService = inject(UserAuthService);
   private readonly notificationService = inject(NotificationService);
-  private readonly dialog = inject(MatDialog);
-  private readonly requiredsCommons = requiredsCommons;
-  private readonly _liveAnnouncer = inject(LiveAnnouncer);
+  private readonly dialogService = inject(MatDialog);
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  pageCommons: PageConfig = pageCommons;
 
-  form: FormGroup;
-  usersDataSource: UserDTO[] = [];
-  displayedColumns: string[] = ['login', 'role', 'createdAt', 'updatedAt'];
-  openForm: boolean = false;
+  dataSource = new MatTableDataSource<UserDTO>();
+  displayedColumns: string[] = [
+    'login',
+    'role',
+    'createdAt',
+    'updatedAt',
+    'actions',
+  ];
   editOrInsert: string = '';
+  totalItens: string;
 
   listRoles = [
     { role: 'ADMIN', view: 'Administrador' },
@@ -46,113 +56,105 @@ export class UserComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.form = FormUtil.buildForm(
-      Object.keys(new UserDTO()),
-      this.requiredsCommons.requiredsUser
-    );
+    this.setPagination();
     this.getUsers();
   }
 
-  getUsers() {
-    this.userService.getUsers().subscribe(
-      (res) => {
-        this.usersDataSource = res;
+  changeSortBy(sort: Sort) {
+    const sortBy = !sort.direction
+      ? 'createdAt'
+      : sort.active + ',' + sort.direction;
+    this.getUsers(sortBy);
+  }
+
+  getUsers(sortBy?: string) {
+    const paginator: PageConfig = {
+      pageIndex: this.paginator.pageIndex,
+      pageSize: this.paginator.pageSize,
+      sortBy: !sortBy ? this.pageCommons.sortBy : sortBy,
+    };
+    this.userService.getUsersPagination(paginator).subscribe({
+      next: (resp) => {
+        this.dataSource = new MatTableDataSource(resp.body);
+        this.totalItens = resp.headers.get('X_TOTAL_COUNT');
       },
-      (err) => {}
-    );
+      complete: () => {},
+    });
   }
 
-  announceSortChange(sortState: Sort) {
-    if (sortState.direction) {
-      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
-    } else {
-      this._liveAnnouncer.announce('Sorting cleared');
+  setPagination() {
+    const paginator: PageConfig = this.pageCommons;
+    if (!this.paginator.pageIndex) {
+      this.paginator.pageIndex = paginator.pageIndex;
     }
-  }
-
-  compareFn(c1: any, c2: any): boolean {
-    return c1 && c2 ? c1 === c2 : c1 === c2;
-  }
-
-  openFormMethod() {
-    if (!this.openForm) {
-      this.openForm = true;
+    if (!this.paginator.pageSize) {
+      this.paginator.pageSize = paginator.pageSize;
     }
   }
 
   delete(userId?: number) {
     this.userService.deleteUser(userId).subscribe({
-      complete: () => {
-        this.getUsers();
-      },
       next: () => {
+        this.getUsers();
         this.notificationService.notificationComplet(
           'Deletado com sucesso',
           'OK',
           5000
         );
       },
-      error: (err) => {
-        this.notificationService.notificationComplet(
-          'Falha ao deletar!',
-          'OK',
-          5000
-        );
-      },
     });
   }
 
-  save() {
-    const values = this.form.value;
-    if (values.id) {
-      this.updateUser(values);
-    } else {
-      this.addUser(values);
-    }
-  }
-
-  addUser(user: UserDTO) {
-    this.userService.insertUser(user).subscribe({
-      next: (res) => {
-        this.notificationService.notificationComplet(
-          'Cadastrado com sucesso',
-          'OK',
-          5000
-        );
-        this.getUsers();
+  openDialog(userDTO?: UserDTO) {
+    if (userDTO) userDTO.senha = '';
+    const dialog = this.dialogService.open(UserFormComponent, {
+      width: '1000px',
+      data: {
+        userSelected: userDTO,
       },
-      error: (err) => {
-        this.notificationService.notificationComplet(
-          'Cadastro de usuario falhou!',
-          'OK',
-          5000
-        );
-      },
-      complete: () => {},
     });
-    this.defaultFormAdd();
+    dialog.afterClosed().subscribe((resp) => {
+      if (resp) {
+        this.save(resp);
+      }
+    });
   }
 
-  editOrInsertMehtod(data?: UserDTO) {
-    if (data) {
-      this.openForm = true;
-      this.editOrInsert = 'edit';
-      this.form.patchValue(data);
+  save(userDTO: UserDTO) {
+    if (userDTO.id) {
+      this.updateUser(userDTO);
     } else {
-      this.editOrInsert = 'insert';
-      this.openForm = true;
-      this.form.reset();
+      this.addUser(userDTO);
     }
   }
 
   openDialogDeleteUser(userId?: number) {
-    const dialogRef = this.dialog.open(DeleteDialogComponent);
+    const dialogRef = this.dialogService.open(DeleteDialogComponent, {
+      width: '400px',
+    });
     dialogRef.afterClosed().subscribe((resp) => {
       if (resp) {
         this.delete(userId);
         this.getUsers();
       }
     });
+  }
+
+  addUser(user: UserDTO) {
+    this.userService.insertUser(user).subscribe({
+      next: (res) => {
+        this.getUsers();
+        this.notificationService.notificationComplet(
+          'Cadastrado com sucesso',
+          'OK',
+          5000
+        );
+      },
+    });
+  }
+
+  changePage() {
+    this.getUsers();
   }
 
   updateUser(user: UserDTO) {
@@ -165,20 +167,6 @@ export class UserComponent implements OnInit {
           5000
         );
       },
-      error: () => {
-        this.notificationService.notificationComplet(
-          'Atualização de usuario falhou!',
-          'OK',
-          5000
-        );
-      },
-      complete: () => {},
     });
-    this.defaultFormAdd();
-  }
-
-  defaultFormAdd() {
-    this.form.reset();
-    this.openForm = false;
   }
 }

@@ -1,4 +1,21 @@
 .aling-footer {
-    height: 100px;
-    background-color: beige;
+  height: 100px;
+  background-color: beige;
+}
+@media (max-width: 1890px) {
+  footer {
+    position: relative;
+  }
+}
+
+@media (max-width: 1280px) {
+  footer {
+    position: relative;
+  }
+}
+
+@media (max-width: 980px) {
+  footer {
+    position: absolute;
+  }
 }
