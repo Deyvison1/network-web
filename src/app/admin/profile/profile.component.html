@@ -1,0 +1,48 @@
+<mat-card class="mt-5 container p-4">
+  <div class="d-flex justify-content-between mb-3">
+    <h2>{{ userName | titlecase }}</h2>
+    <button
+      appAuthRole
+      [matTooltip]="!isActiveEditForm ? 'Ativar Edição' : 'Desativar Edição'"
+      class="btn btn-primary"
+      (click)="editProfile()"
+    >
+      <i class="fa-solid fa-user-pen"></i>
+    </button>
+  </div>
+
+  <form [formGroup]="form">
+    <div class="row">
+      <div class="col-6">
+        <label for="login">Login: </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="login"
+          placeholder="Login"
+        />
+        <app-erro [setControl]="form.get('login')"></app-erro>
+      </div>
+      <div class="col-6">
+        <label for="senha">Nova Senha: </label>
+        <input
+          type="password"
+          class="form-control"
+          formControlName="senha"
+          placeholder="Nova Senha"
+        />
+        <app-erro [setControl]="form.get('senha')"></app-erro>
+      </div>
+    </div>
+    @if (isActiveEditForm) {
+    <button
+      matTooltip="Salvar"
+      [disabled]="form.invalid"
+      class="btn btn-primary mt-3"
+      (click)="save()"
+    >
+      <i class="fa-regular fa-floppy-disk"></i>
+    </button>
+    }
+  </form>
+</mat-card>

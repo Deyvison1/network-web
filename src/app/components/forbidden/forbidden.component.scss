@@ -1,9 +1,7 @@
 .align-center {
   display: flex;
-  align-items: center; //centraliza horizontalmente
+  align-items: center;
   justify-content: center;
-  width: 50%;
-  height: 50%; //cetraliza verticalmente
 }
 
 @media (min-width: 1280px) {

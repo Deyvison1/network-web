@@ -35,8 +35,16 @@ export class UserAuthService extends HttpService {
     );
   }
 
+  findByLogin(login: string): Observable<UserDTO> {
+    return this.http.get<UserDTO>(`${this.url}/get-login/${login}`);
+  }
+
   deleteUser(id?: number) {
     return this.http.delete(`${this.url}/${id}`);
+  }
+
+  editUserPartial(user: UserDTO): Observable<UserDTO> {
+    return this.http.patch(`${this.url}/${user.id}`, user);
   }
 
   isLogado() {

@@ -20,6 +20,7 @@ import { RouterService } from '../../services/router.service';
     MatButtonModule,
   ],
   templateUrl: './nav-bar.component.html',
+  styleUrl: './nav-bar.component.scss'
 })
 export class NavBarComponent implements OnInit {
   private readonly dialogService = inject(MatDialog);
@@ -53,7 +54,7 @@ export class NavBarComponent implements OnInit {
   }
 
   redirectionToProfile() {
-    this.router.redirectionTo('/user');
+    this.router.redirectionTo('/profile');
   }
 
   getInformationToken() {
