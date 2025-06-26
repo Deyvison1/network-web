@@ -19,24 +19,16 @@ export class HomeComponent {
 
   sair() {
     localStorage.removeItem('token');
-    this.routerService.redirectionTo('home');
+    this.redirectionToPath('/home');
   }
 
-  openDialogDeleteProduct(item?: any) {
-    // const dialogRef = this.matDialog.open(UserComponent, {
-    //   width: '900px',
-    // });
-    // dialogRef.afterClosed().subscribe((resp) => {
-    //   if (resp) {
-    //   }
-    // });
-  }
+
 
   getLengthCategory(lengthCategory: string) {
     this.totalCategory = lengthCategory;
   }
 
-  redirecionarPagePrincipal() {
-    this.routerService.redirectionTo('home');
+  redirectionToPath(path: string) {
+    this.routerService.redirectionTo(path);
   }
 }

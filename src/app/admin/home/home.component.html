@@ -1,11 +1,11 @@
 <mat-card class="container border" style="margin-top: 40px">
   <div class="mt-2 d-flex justify-content-between">
-    <button (click)="redirecionarPagePrincipal()" class="btn btn-success">
+    <button (click)="redirectionToPath('/home')" class="btn btn-success">
       <em class="fa-solid fa-arrow-left"></em>&nbsp; Voltar a pagina principal
     </button>
 
     <div class="btn-group">
-      <button class="btn btn-primary" (click)="openDialogDeleteProduct()">
+      <button class="btn btn-primary" (click)="redirectionToPath('/user')">
         <i class="fa-solid fa-users-gear"></i>
         &nbsp; Controle de Usuarios
       </button>
