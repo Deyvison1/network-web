@@ -1,5 +1,9 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { LoginComponent } from '../../admin/login/login.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,7 +12,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../services/auth.service';
 import InformationsTokenDTO from '../../models/interfaces/informations-token.dto';
 import { RouterService } from '../../services/router.service';
-
+interface ItemMenu {
+  icon: string;
+  label: string;
+  function(): void;
+}
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -18,20 +26,53 @@ import { RouterService } from '../../services/router.service';
     MatIconModule,
     MatMenuModule,
     MatButtonModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatListModule,
   ],
   templateUrl: './nav-bar.component.html',
-  styleUrl: './nav-bar.component.scss'
+  styleUrl: './nav-bar.component.scss',
 })
 export class NavBarComponent implements OnInit {
+  private readonly observer = inject(BreakpointObserver);
   private readonly dialogService = inject(MatDialog);
   private readonly authService = inject(AuthService);
   private readonly router = inject(RouterService);
   nameApplication = 'Supreme Network Web';
   isLoggedIn: boolean;
   userName: string;
+  itensMenu: ItemMenu[] = [];
+
+  isSmallScreen = signal(false);
 
   ngOnInit(): void {
     this.verificationLoggedIn();
+    this.initItensMenu();
+  }
+
+  nada() {
+    this.observer.observe(['(max-width: 768px)']).subscribe((result) => {
+      this.isSmallScreen.set(result.matches);
+    });
+  }
+
+  initItensMenu() {
+    this.itensMenu = [
+      {
+        icon: 'account_circle',
+        label: 'Perfil',
+        function: () => {
+          this.redirectionToProfile();
+        },
+      },
+      {
+        icon: 'logout',
+        label: 'Sair',
+        function: () => {
+          this.logout();
+        },
+      },
+    ];
   }
 
   verificationLoggedIn() {
@@ -46,11 +87,9 @@ export class NavBarComponent implements OnInit {
       width: '400px',
     });
 
-    dialog.afterClosed().subscribe(
-      (resp) => {
-        this.verificationLoggedIn();
-      }
-    );
+    dialog.afterClosed().subscribe((resp) => {
+      this.verificationLoggedIn();
+    });
   }
 
   redirectionToProfile() {
