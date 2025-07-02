@@ -12,9 +12,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../services/auth.service';
 import InformationsTokenDTO from '../../models/interfaces/informations-token.dto';
 import { RouterService } from '../../services/router.service';
+import { MatCardModule } from '@angular/material/card';
+import { RouterOutlet } from '@angular/router';
+import { MatTooltipModule } from '@angular/material/tooltip';
 interface ItemMenu {
   icon: string;
   label: string;
+  tooltip?: string,
   function(): void;
 }
 @Component({
@@ -29,6 +33,9 @@ interface ItemMenu {
     MatToolbarModule,
     MatSidenavModule,
     MatListModule,
+    MatCardModule,
+    RouterOutlet,
+    MatTooltipModule
   ],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.scss',
@@ -42,18 +49,14 @@ export class NavBarComponent implements OnInit {
   isLoggedIn: boolean;
   userName: string;
   itensMenu: ItemMenu[] = [];
+  itensMenuSideBar: ItemMenu[] = [];
 
   isSmallScreen = signal(false);
 
   ngOnInit(): void {
     this.verificationLoggedIn();
     this.initItensMenu();
-  }
-
-  nada() {
-    this.observer.observe(['(max-width: 768px)']).subscribe((result) => {
-      this.isSmallScreen.set(result.matches);
-    });
+    this.initItensMenuSideBar();
   }
 
   initItensMenu() {
@@ -70,6 +73,39 @@ export class NavBarComponent implements OnInit {
         label: 'Sair',
         function: () => {
           this.logout();
+        },
+      },
+    ];
+  }
+
+  redirectionToUrl(url: string) {
+    this.router.redirectionTo(url);
+  }
+
+  initItensMenuSideBar() {
+    this.itensMenuSideBar = [
+      {
+        icon: 'add_shopping_cart',
+        label: 'Produtos',
+        tooltip: 'Controle dos Planos',
+        function: () => {
+          this.redirectionToUrl('/product');
+        },
+      },
+      {
+        icon: 'category',
+        label: 'Categorias',
+        tooltip: 'Controle das Categorias',
+        function: () => {
+          this.redirectionToUrl('/category');
+        },
+      },
+      {
+        icon: 'group',
+        label: 'Usuários',
+        tooltip: 'Controle dos Usuários',
+        function: () => {
+          this.redirectionToUrl('/user');
         },
       },
     ];

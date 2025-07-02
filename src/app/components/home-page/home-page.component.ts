@@ -8,12 +8,8 @@ import { ProductDTO } from '../../models/product.dto';
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [
-    CommonModule,
-    CompanyVisualizationComponent,
-    ProductsComponent
-  ],
-  templateUrl: './home-page.component.html'
+  imports: [CommonModule, CompanyVisualizationComponent, ProductsComponent],
+  templateUrl: './home-page.component.html',
 })
 export class HomePageComponent implements OnInit {
   private readonly productService = inject(ProductService);
@@ -21,16 +17,14 @@ export class HomePageComponent implements OnInit {
   products: ProductDTO[] = [];
 
   ngOnInit(): void {
-    this.getAll();  
+    this.getAll();
   }
 
   getAll() {
     this.productService.getAllProducts().subscribe({
       next: (resp) => {
         this.products = resp;
-      },
-      complete: () => {},
-      error: () => {}
+      }
     });
   }
 }
