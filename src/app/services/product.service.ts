@@ -10,7 +10,7 @@ import PageConfig from '../models/interfaces/page.config';
   providedIn: 'root',
 })
 export class ProductService extends HttpService {
-  private readonly url: string = environment.urlApi.concat('/product');
+  private readonly url: string = environment.urlApi.concat('/products');
 
   getAllProductsPage(
     pageConfig: PageConfig

@@ -76,7 +76,7 @@ export class UserFormComponent implements OnInit {
   }
 
   openRoleDialog() {
-    const dialog = this.dialogService.open(RoleComponent, {
+    this.dialogService.open(RoleComponent, {
       width: '600px'
     });
   }

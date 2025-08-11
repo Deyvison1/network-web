@@ -25,25 +25,29 @@
       />
       <app-erro [setControl]="form.get('senha')"></app-erro>
     </div>
-    <div class="row">
-      <div class="col-6">
-        <label for="papel">Papel</label>
-        <select
-          class="form-control"
-          formControlName="role"
-          [compareWith]="compareFn"
-        >
-          <option *ngFor="let role of listRoles" [ngValue]="role.role">
-            {{ role.view }}
-          </option>
-        </select>
-        <app-erro [setControl]="form.get('role')"></app-erro>
-      </div>
-      <div class="col-1 d-flex align-items-end" (click)="openRoleDialog()">
-        <button class="btn btn-primary" matTooltip="Adicionar um papel">
-          <i class="fa-solid fa-plus"></i>
-        </button>
-      </div>
+  </div>
+  <div class="row">
+    <div class="col-6">
+      <label for="papel">Papel</label>
+      <select
+        class="form-control"
+        formControlName="role"
+        [compareWith]="compareFn"
+      >
+        <option *ngFor="let role of listRoles" [ngValue]="role.role">
+          {{ role.view }}
+        </option>
+      </select>
+      <app-erro [setControl]="form.get('role')"></app-erro>
+    </div>
+    <div class="col-1 d-flex align-items-end">
+      <button
+        class="btn btn-primary"
+        matTooltip="Adicionar um papel"
+        (click)="openRoleDialog()"
+      >
+        <i class="fa-solid fa-plus"></i>
+      </button>
     </div>
   </div>
   <div class="mt-2 d-flex justify-content-between">

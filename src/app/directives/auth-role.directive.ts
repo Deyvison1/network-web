@@ -14,8 +14,8 @@ export class AuthRoleDirective implements OnInit {
   }
 
   ngOnInit(): void {
-    const nada: InformationsTokenDTO = this.roleUser();
-    if (!nada.roles.includes('[ROLE_ADMIN]')) {
+    const role: InformationsTokenDTO = this.roleUser();
+    if (!role.roles.includes('[ROLE_ADMIN]')) {
       this.el.nativeElement.style.display = 'none';
       this.el.nativeElement.remove();
     }

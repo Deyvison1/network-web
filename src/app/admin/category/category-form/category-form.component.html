@@ -1,0 +1,38 @@
+<app-drag-and-drop [title]="title" (closedDialog)="close()"></app-drag-and-drop>
+<form [formGroup]="form" class="p-4">
+  <div class="row">
+    <div class="col">
+      <label for="name">Nome:</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="name"
+        id="name"
+        placeholder="Nome"
+      />
+      <app-erro [setControl]="form.get('name')"></app-erro>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <label for="description">Descrição</label>
+      <textarea
+        class="form-control"
+        formControlName="description"
+        id="description"
+        cols="30"
+      ></textarea>
+      <app-erro [setControl]="form.get('description')"></app-erro>
+    </div>
+  </div>
+  <div class="mt-2 d-flex justify-content-between">
+    <button
+      matTooltip="Salvar"
+      [disabled]="!form.valid"
+      class="btn btn-primary"
+      (click)="saveCategory()"
+    >
+      <i class="fa-regular fa-floppy-disk"></i>
+    </button>
+  </div>
+</form>

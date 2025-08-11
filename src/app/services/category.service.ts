@@ -10,7 +10,7 @@ import PageConfig from '../models/interfaces/page.config';
   providedIn: 'root',
 })
 export class CategoryService extends HttpService {
-  private readonly urlApiCategory = environment.urlApi.concat('/api/category');
+  private readonly urlApiCategory = environment.urlApi.concat('/categories');
 
   getAllCategoryPage(
     pageConfig: PageConfig
