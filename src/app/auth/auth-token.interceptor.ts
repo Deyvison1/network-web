@@ -8,37 +8,40 @@ export const AuthTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(RouterService);
   const notificationService = inject(NotificationService);
 
-  if (localStorage.getItem('token') !== null) {
-    const cloneReq = req.clone({
-      headers: req.headers.set(
-        'Authorization',
-        `Bearer ${localStorage.getItem('token')}`
-      ),
-    });
-    return next(cloneReq).pipe(
-      tap({
-        error: (err: HttpErrorResponse) => {
-          if (err.status === 401) {
-            router.redirectionTo('/home');
-          }
-          if (err.status === 403) {
-            router.redirectionTo('/forbidden');
-          }
-          if (err.status === 404) {
-            notificationService.notificationSimple(err.error.message);
-          }
-          if (err.status === 400) {
-            notificationService.notificationSimple(err.error.message);
-          }
-          if (err.status === 500) {
-            notificationService.notificationSimple(
-              'Aconteceu um error no servidor. Tente novamente ou contate a equipe tecnica.'
-            );
-          }
-        },
-      })
-    );
-  } else {
-    return next(req.clone());
+  // Começa com o header que sempre vai
+  let headers = req.headers.set(
+    'X-Internal-Token',
+    'c523db8c7dafcaf567a28d7d910f985ffdfff52d2e5850f18062f8c82e338e6b'
+  );
+
+  // Adiciona Authorization se tiver token
+  const token = localStorage.getItem('token');
+  if (token) {
+    headers = headers.set('Authorization', `Bearer ${token}`);
   }
+
+  // Clona a requisição com os headers montados
+  const cloneReq = req.clone({ headers });
+
+  // Retorna a requisição com o tratamento de erro
+  return next(cloneReq).pipe(
+    tap({
+      error: (err: HttpErrorResponse) => {
+        if (err.status === 401) {
+          router.redirectionTo('/home');
+        }
+        if (err.status === 403) {
+          router.redirectionTo('/forbidden');
+        }
+        if (err.status === 404 || err.status === 400) {
+          notificationService.notificationSimple(err.error.message);
+        }
+        if (err.status === 500) {
+          notificationService.notificationSimple(
+            'Aconteceu um erro no servidor. Tente novamente ou contate a equipe técnica.'
+          );
+        }
+      },
+    })
+  );
 };

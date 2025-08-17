@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { UserAuthService } from '../../services/user-auth.service';
+import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import {
   FormBuilder,
@@ -30,7 +30,7 @@ import { ErroComponent } from '../../components/erro/erro.component';
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
-  private readonly userService = inject(UserAuthService);
+  private readonly userService = inject(UserService);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly fb = inject(FormBuilder);

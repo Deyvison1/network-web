@@ -2,21 +2,15 @@ import { HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { CredenciaisDTO } from '../models/credentials';
 import { UserDTO } from '../models/user.dto';
 import { HttpService } from './http.service';
 import PageConfig from '../models/interfaces/page.config';
-import { LoginDTO } from '../models/login.dto';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserAuthService extends HttpService {
-  private readonly url: string = environment.urlApi.concat('/api/usuario');
-
-  getToken(userAuth: LoginDTO): Observable<CredenciaisDTO> {
-    return this.http.post<CredenciaisDTO>(`${this.url}/auth`, userAuth);
-  }
+export class UserService extends HttpService {
+  private readonly url: string = environment.urlApi.concat('/users');
 
   insertUser(user: UserDTO): Observable<UserDTO> {
     return this.http.post<UserDTO>(`${this.url}`, user);
@@ -45,9 +39,5 @@ export class UserAuthService extends HttpService {
 
   editUserPartial(user: UserDTO): Observable<UserDTO> {
     return this.http.patch(`${this.url}/${user.id}`, user);
-  }
-
-  isLogado() {
-    return !!localStorage.getItem('token');
   }
 }

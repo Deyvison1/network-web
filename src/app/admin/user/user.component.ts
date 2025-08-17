@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserDTO } from '../../models/user.dto';
-import { UserAuthService } from '../../services/user-auth.service';
+import { UserService } from '../../services/user.service';
 import { NotificationService } from '../../services/notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -32,7 +32,7 @@ import { AuthRoleDirective } from '../../directives/auth-role.directive';
   styleUrl: './user.component.scss',
 })
 export class UserComponent implements OnInit {
-  private readonly userService = inject(UserAuthService);
+  private readonly userService = inject(UserService);
   private readonly notificationService = inject(NotificationService);
   private readonly dialogService = inject(MatDialog);
   @ViewChild(MatSort, { static: true }) sort: MatSort;

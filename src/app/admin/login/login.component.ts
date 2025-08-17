@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 import { NotificationService } from '../../services/notification.service';
 import { RouterService } from '../../services/router.service';
-import { UserAuthService } from '../../services/user-auth.service';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,6 +22,7 @@ import { FormUtil } from '../../utils/form.utils';
 import { LoginDTO } from '../../models/login.dto';
 import { requiredsCommons } from '../../consts/requireds.commons';
 import { ErroComponent } from '../../components/erro/erro.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly dialogRef = inject(MatDialogRef);
   private readonly router = inject(RouterService);
-  readonly authService = inject(UserAuthService);
+  readonly authService = inject(AuthService);
   private readonly requiredsCommons = requiredsCommons;
 
   titleDialog: string = 'Login';
@@ -82,7 +82,7 @@ export class LoginComponent implements OnInit {
   verificationLogin() {
     const req: LoginDTO = this.form.value;
 
-    this.authService.getToken(req).subscribe({
+    this.authService.login(req).subscribe({
       complete: () => {},
       next: (res) => {
         if (res.token) {
