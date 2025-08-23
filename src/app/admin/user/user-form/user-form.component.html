@@ -5,42 +5,55 @@
 <form [formGroup]="form" class="p-4">
   <div class="row">
     <div class="col">
-      <label for="nome">Nome:</label>
+      <label for="nome">Nick:</label>
       <input
         class="form-control"
         type="text"
         minlength="4"
-        formControlName="login"
-        placeholder="Nome"
+        formControlName="nick"
+        placeholder="Nick"
       />
-      <app-erro [setControl]="form.get('login')"></app-erro>
+      <app-erro [setControl]="form.get('nick')"></app-erro>
     </div>
     <div class="col">
       <label for="senha">{{ labelPassowrd }}:</label>
       <input
         class="form-control"
         type="password"
-        formControlName="senha"
+        formControlName="password"
         [placeholder]="labelPassowrd"
       />
-      <app-erro [setControl]="form.get('senha')"></app-erro>
+      <app-erro [setControl]="form.get('password')"></app-erro>
     </div>
   </div>
   <div class="row">
-    <div class="col-6">
-      <label for="papel">Papel</label>
-      <select
+    <div class="col-5">
+      <label for="email">E-mail</label>
+      <input type="email" formControlName="email" class="form-control" />
+      <app-erro [setControl]="form.get('email')"></app-erro>
+    </div>
+    <div class="col-5">
+      <mat-label>Papeis</mat-label>
+      <mat-select
+        [matTooltip]="getSelectedRolesMatTooltip()"
+        formControlName="roles"
         class="form-control"
-        formControlName="role"
+        multiple
         [compareWith]="compareFn"
       >
-        <option *ngFor="let role of listRoles" [ngValue]="role.role">
-          {{ role.view }}
-        </option>
-      </select>
-      <app-erro [setControl]="form.get('role')"></app-erro>
+        <mat-select-trigger>
+          {{ getSelectedRolesLabel() }}
+        </mat-select-trigger>
+
+        @for (role of listRoles; track role) {
+        <mat-option [value]="role">{{ role.name }}</mat-option>
+        }
+      </mat-select>
+
+      <app-erro [setControl]="form.get('roles')"></app-erro>
     </div>
-    <div class="col-1 d-flex align-items-end">
+    <div class="col-1">
+      <br />
       <button
         class="btn btn-primary"
         matTooltip="Adicionar um papel"

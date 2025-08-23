@@ -25,6 +25,10 @@ export class CategoryService extends HttpService {
     return this.http.get<CategoryDTO[]>(`${this.urlApiCategory}/get-all`);
   }
 
+  findByIdComplet(uuid: string): Observable<CategoryDTO> {
+    return this.http.get(`${this.urlApiCategory}/${uuid}`);
+  }
+
   insertCategory(category: CategoryDTO) {
     return this.http.post<CategoryDTO>(`${this.urlApiCategory}`, category);
   }
@@ -33,7 +37,7 @@ export class CategoryService extends HttpService {
     return this.http.put<CategoryDTO>(`${this.urlApiCategory}`, category);
   }
 
-  deleteCategory(categoryId: number) {
-    return this.http.delete(`${this.urlApiCategory}/${categoryId}`);
+  deleteCategory(uuid: string) {
+    return this.http.delete(`${this.urlApiCategory}/${uuid}`);
   }
 }

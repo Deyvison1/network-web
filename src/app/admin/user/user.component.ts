@@ -35,16 +35,17 @@ export class UserComponent implements OnInit {
   private readonly userService = inject(UserService);
   private readonly notificationService = inject(NotificationService);
   private readonly dialogService = inject(MatDialog);
+  public readonly roles: string[] = ['ADMIN'];
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   pageCommons: PageConfig = pageCommons;
 
   dataSource = new MatTableDataSource<UserDTO>();
   displayedColumns: string[] = [
-    'login',
-    'role',
-    'createdAt',
-    'updatedAt',
+    'nick',
+    'roles',
+    'created',
+    'updated',
     'actions',
   ];
   editOrInsert: string = '';
@@ -92,7 +93,7 @@ export class UserComponent implements OnInit {
     }
   }
 
-  delete(userId?: number) {
+  delete(userId: string) {
     this.userService.deleteUser(userId).subscribe({
       next: () => {
         this.getUsers();
@@ -106,7 +107,7 @@ export class UserComponent implements OnInit {
   }
 
   openDialog(userDTO?: UserDTO) {
-    if (userDTO) userDTO.senha = '';
+    if (userDTO) userDTO.password = '';
     const dialog = this.dialogService.open(UserFormComponent, {
       width: '1000px',
       data: {
@@ -121,20 +122,20 @@ export class UserComponent implements OnInit {
   }
 
   save(userDTO: UserDTO) {
-    if (userDTO.id) {
+    if (userDTO.uuid) {
       this.updateUser(userDTO);
     } else {
       this.addUser(userDTO);
     }
   }
 
-  openDialogDeleteUser(userId?: number) {
+  openDialogDeleteUser(uuid: string) {
     const dialogRef = this.dialogService.open(DeleteDialogComponent, {
       width: '400px',
     });
     dialogRef.afterClosed().subscribe((resp) => {
       if (resp) {
-        this.delete(userId);
+        this.delete(uuid);
         this.getUsers();
       }
     });

@@ -1,13 +1,5 @@
+import { Component, OnInit, inject, output } from '@angular/core';
 import {
-  Component,
-  OnInit,
-  inject,
-  input,
-  output,
-  signal,
-} from '@angular/core';
-import {
-  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -19,10 +11,19 @@ import { UserDTO } from '../../../models/user.dto';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { DragAndDropComponent } from '../../../components/drag-and-drop/drag-and-drop.component';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ErroComponent } from '../../../components/erro/erro.component';
 import { RoleComponent } from '../role/role.component';
+import { RoleDTO } from '../../../models/role.dto';
+import { RoleService } from '../../../services/role.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatOptionModule } from '@angular/material/core';
 
 export interface Data {
   userSelected: UserDTO;
@@ -38,6 +39,9 @@ export interface Data {
     DragAndDropComponent,
     MatTooltipModule,
     ErroComponent,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatOptionModule,
   ],
   templateUrl: './user-form.component.html',
   styleUrl: './user-form.component.scss',
@@ -46,16 +50,19 @@ export class UserFormComponent implements OnInit {
   private readonly requiredsCommons = requiredsCommons;
   private readonly dialogRef = inject(MatDialogRef<UserFormComponent>);
   private readonly dialogService = inject(MatDialog);
+  private readonly roleService = inject(RoleService);
   data = inject<Data>(MAT_DIALOG_DATA);
   form: FormGroup;
   labelPassowrd: string = 'Senha';
   title: string = '';
-  listRoles = [
-    { role: 'ADMIN', view: 'Administrador' },
-    { role: 'USER', view: 'Usuario' },
-  ];
-
+  listRoles: RoleDTO[] = [];
+  displaySelectedRoles: [];
   saveEmitter = output<UserDTO>();
+
+  ngOnInit(): void {
+    this.initForm();
+    this.getRoles();
+  }
 
   initForm() {
     this.form = FormUtil.buildForm(
@@ -63,21 +70,31 @@ export class UserFormComponent implements OnInit {
       this.requiredsCommons.requiredsUser
     );
     this.form
-      .get('login')
+      .get('nick')
       .addValidators([Validators.minLength(4), Validators.maxLength(20)]);
     this.form
-      .get('senha')
+      .get('password')
       .addValidators([Validators.minLength(4), Validators.maxLength(20)]);
     this.addOrEdit();
   }
 
-  ngOnInit(): void {
-    this.initForm();
+  getRoles() {
+    this.roleService.getAllRoles().subscribe({
+      next: (rolesDTO: RoleDTO[]) => {
+        this.listRoles = rolesDTO;
+      },
+    });
   }
 
   openRoleDialog() {
-    this.dialogService.open(RoleComponent, {
-      width: '600px'
+    const dialog = this.dialogService.open(RoleComponent, {
+      width: '600px',
+    });
+
+    dialog.afterClosed().subscribe((resp) => {
+      if (resp) {
+        this.getRoles();
+      }
     });
   }
 
@@ -94,15 +111,41 @@ export class UserFormComponent implements OnInit {
   }
 
   save() {
-    const userDTO: UserDTO = this.form.value;
+    const userDTO: UserDTO = this.form.getRawValue();
+    console.log(this.form);
     this.closedDialog(userDTO);
   }
 
-  compareFn(c1: string, c2: string): boolean {
-    return c1 === c2;
+  compareFn(role1: RoleDTO, role2: RoleDTO): boolean {
+    return role1 && role2 ? role1.uuid === role2.uuid : role1 === role2;
   }
 
   closedDialog(userDTO?: UserDTO) {
     this.dialogRef.close(userDTO);
+  }
+
+  getSelectedRolesLabel(): string {
+    const selected: RoleDTO[] = this.form.get('roles')?.value;
+    if (!selected || selected.length === 0) {
+      return 'Nenhum papel selecionado';
+    }
+
+    if (selected.length <= 2) {
+      // Se tem até 2 itens, mostra todos separados por vírgula
+      return selected.map((r) => r.name).join(', ');
+    }
+
+    // Se tem mais que 2, mostra o primeiro e depois "... +X"
+    return `${selected[0].name}... +${selected.length - 1}`;
+  }
+
+  getSelectedRolesMatTooltip() {
+    const rolesSelected: RoleDTO[] = this.form?.controls['roles'].value;
+    if (this.form.controls['roles'].value && rolesSelected.length > 2) {
+      const namesRolesSelected: string[] = rolesSelected.map((r) => r.name);
+      let rolesFormat: string = namesRolesSelected.join(', ');
+      return rolesFormat;
+    }
+    return '';
   }
 }

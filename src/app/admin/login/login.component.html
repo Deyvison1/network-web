@@ -14,13 +14,13 @@
 <mat-dialog-content>
   <form [formGroup]="form" (submit)="verificationLogin()">
     <mat-form-field [style.width.%]="100">
-      <mat-label>Login</mat-label>
+      <mat-label>Nick Name</mat-label>
       <input
         matInput
-        id="login"
-        name="login"
-        formControlName="login"
-        placeholder="Login"
+        id="nick"
+        name="nick"
+        formControlName="nick"
+        placeholder="Nick Name"
       />
     </mat-form-field>
     
@@ -28,10 +28,10 @@
       <mat-label>Senha</mat-label>
       <input
         matInput
-        id="name"
+        id="password"
         type="password"
-        name="senha"
-        formControlName="senha"
+        name="password"
+        formControlName="password"
         placeholder="Senha"
       />
     </mat-form-field>

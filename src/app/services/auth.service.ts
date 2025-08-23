@@ -3,10 +3,12 @@ import { jwtDecode } from 'jwt-decode';
 import InformationsTokenDTO from '../models/interfaces/informations-token.dto';
 import { RouterService } from './router.service';
 import { HttpService } from './http.service';
-import { LoginDTO } from '../models/login.dto';
 import { Observable } from 'rxjs';
-import { CredenciaisDTO } from '../models/credentials';
 import { environment } from '../../environments/environment';
+import { LoginDTO } from '../models/login.dto';
+import { TokenDTO } from '../models/interfaces/token.dto';
+import { ResponseDTO } from '../models/interfaces/response.dto';
+import { ResponseTokenDTO } from '../models/interfaces/token-response.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -19,8 +21,8 @@ export class AuthService extends HttpService {
     return localStorage.getItem('token');
   }
 
-  login(userAuth: LoginDTO): Observable<CredenciaisDTO> {
-    return this.http.post<CredenciaisDTO>(`${this.url}`, userAuth);
+  login(userAuth: LoginDTO): Observable<ResponseTokenDTO> {
+    return this.http.post<ResponseTokenDTO>(`${this.url}/signin`, userAuth);
   }
 
   public decodePayloadJWT(): InformationsTokenDTO {

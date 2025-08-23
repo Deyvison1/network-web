@@ -1,5 +1,5 @@
 export default interface InformationsTokenDTO {
   exp: number;
-  roles: string;
+  roles: string[];
   sub: string;
 }

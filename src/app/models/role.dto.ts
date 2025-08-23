@@ -1,7 +1,7 @@
 export class RoleDTO {
   constructor(
-    public id?: number,
+    public uuid?: string,
     public name?: string,
-    public sigla?: string
+    public description?: string
   ) {}
 }

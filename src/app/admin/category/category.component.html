@@ -1,3 +1,3 @@
-<app-category-list
-  (openDialogCategoryEmitter)="openDialogCategory()"
+<app-category-list [setDataSource]="dataSource" (refreshDataSource)="refreshDataSource($event)"
+  (openDialogCategoryEmitter)="openDialogCategory($event)"
 ></app-category-list>

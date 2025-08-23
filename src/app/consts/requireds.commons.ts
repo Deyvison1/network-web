@@ -10,7 +10,7 @@ export const requiredsCommons = {
     'description',
     'category',
   ],
-  requiredsUser: ['login', 'senha', 'role'],
-  requiredLogin: ['login', 'senha'],
-  requiredRole: ['name', 'sigla']
+  requiredsUser: ['nick', 'password', 'roles', 'email'],
+  requiredLogin: ['nick', 'password'],
+  requiredRole: ['name', 'description']
 };

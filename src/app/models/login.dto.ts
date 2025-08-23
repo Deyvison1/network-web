@@ -1,3 +1,3 @@
 export class LoginDTO {
-  constructor(public login?: string, public senha?: string) {}
+  constructor(public nick?: string, public password?: string) {}
 }

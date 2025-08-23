@@ -8,6 +8,8 @@ import { FormUtil } from '../../../utils/form.utils';
 import { RoleDTO } from '../../../models/role.dto';
 import { requiredsCommons } from '../../../consts/requireds.commons';
 import { ErroComponent } from '../../../components/erro/erro.component';
+import { RoleService } from '../../../services/role.service';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-role',
@@ -24,8 +26,10 @@ import { ErroComponent } from '../../../components/erro/erro.component';
 })
 export class RoleComponent implements OnInit {
   private readonly dialogRef = inject(MatDialogRef<RoleComponent>);
+  private readonly roleService = inject(RoleService);
+  private readonly notificationService = inject(NotificationService);
   private readonly requiredsCommons = requiredsCommons;
-  title: string =  'Papel do Usuário';
+  title: string = 'Papel do Usuário';
   form: FormGroup;
 
   ngOnInit(): void {
@@ -41,13 +45,28 @@ export class RoleComponent implements OnInit {
       .get('name')
       .addValidators([Validators.minLength(4), Validators.maxLength(20)]);
     this.form
-      .get('sigla')
+      .get('description')
       .addValidators([Validators.minLength(4), Validators.maxLength(20)]);
   }
 
-  close() {
-    this.dialogRef.close();
+  close(isSuccess?: boolean) {
+    this.dialogRef.close(isSuccess);
   }
 
-  save() {}
+  save() {
+    const roleDTO: RoleDTO = this.form.getRawValue();
+    this.roleService.save(roleDTO).subscribe({
+      next: (resp) => {
+        this.close(true);
+        this.notificationService.notificationComplet(
+          'Registro salvo com sucesso',
+          'OK',
+          5000
+        );
+      },
+      error: (err) => {
+        this.close(false);
+      },
+    });
+  }
 }

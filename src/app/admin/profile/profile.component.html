@@ -14,24 +14,24 @@
   <form [formGroup]="form">
     <div class="row">
       <div class="col-6">
-        <label for="login">Login: </label>
+        <label for="login">Nick: </label>
         <input
           type="text"
           class="form-control"
-          formControlName="login"
-          placeholder="Login"
+          formControlName="nick"
+          placeholder="Nick"
         />
-        <app-erro [setControl]="form.get('login')"></app-erro>
+        <app-erro [setControl]="form.get('nick')"></app-erro>
       </div>
       <div class="col-6">
         <label for="senha">Nova Senha: </label>
         <input
           type="password"
           class="form-control"
-          formControlName="senha"
+          formControlName="password"
           placeholder="Nova Senha"
         />
-        <app-erro [setControl]="form.get('senha')"></app-erro>
+        <app-erro [setControl]="form.get('password')"></app-erro>
       </div>
     </div>
     @if (isActiveEditForm) {

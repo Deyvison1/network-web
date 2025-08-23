@@ -7,6 +7,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { CategoryFormComponent } from './category-form/category-form.component';
 import { MatCardModule } from '@angular/material/card';
 import { CategoryDTO } from '../../models/category.dto';
+import PageConfig from '../../models/interfaces/page.config';
+import { HttpResponse } from '@angular/common/http';
+import { MatTableDataSource } from '@angular/material/table';
+import { ActionType } from '../../consts/enums/cction-type.enum';
+import { ActionTypeBodyDTO } from '../../models/interfaces/action-type-body.dto';
 
 @Component({
   selector: 'app-category',
@@ -20,28 +25,68 @@ export class CategoryComponent {
   private readonly notificationService = inject(NotificationService);
   private readonly dialogService = inject(MatDialog);
 
-  openDialogCategory() {
+  dataSource: MatTableDataSource<CategoryDTO>;
+  pageConfig: PageConfig;
+
+  openDialogCategory(actionTypeBodyDTO: ActionTypeBodyDTO<CategoryDTO>) {
     const dialog = this.dialogService.open(CategoryFormComponent, {
       width: '1000px',
+      data: actionTypeBodyDTO
     });
+
+    this.findByIdComplet(actionTypeBodyDTO.body.uuid);
 
     dialog.beforeClosed().subscribe({
       next: (categoryDTO: CategoryDTO) => {
-          alert('after');
         if (categoryDTO) {
-          this.saveCategory(categoryDTO);
+          if (actionTypeBodyDTO.actionType == ActionType.INSERT) {
+            this.saveCategory(categoryDTO);
+          } else {
+            this.editCategory(categoryDTO);
+          }
         }
       },
     });
   }
 
-  saveCategory(category: CategoryDTO) {
-    this.categoryService.insertCategory(category).subscribe(
+  findByIdComplet(uuid: string) {
+    this.categoryService.findByIdComplet(uuid).subscribe(
       {
         next: (category: CategoryDTO) => {
-          this.notificationService.notificationSimple('Categoria adicionada com sucesso!');
+          console.log(category);
         }
       }
     );
+  }
+
+  refreshDataSource(pageConfig: PageConfig) {
+    this.pageConfig = pageConfig;
+    this.categoryService.getAllCategoryPage(pageConfig).subscribe({
+      next: (categories: HttpResponse<CategoryDTO[]>) => {
+        this.dataSource = new MatTableDataSource(categories.body);
+      },
+    });
+  }
+
+  editCategory(categoryDTO: CategoryDTO) {
+    this.categoryService.editCategory(categoryDTO).subscribe({
+      next: (category: CategoryDTO) => {
+        this.notificationService.notificationSimple(
+          'Categoria atualizada com sucesso!'
+        );
+        this.refreshDataSource(this.pageConfig);
+      },
+    });
+  }
+
+  saveCategory(category: CategoryDTO) {
+    this.categoryService.insertCategory(category).subscribe({
+      next: (category: CategoryDTO) => {
+        this.notificationService.notificationSimple(
+          'Categoria adicionada com sucesso!'
+        );
+        this.refreshDataSource(this.pageConfig);
+      },
+    });
   }
 }

@@ -16,12 +16,10 @@ import {
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { CredenciaisDTO } from '../../models/credentials';
 import { DragAndDropComponent } from '../../components/drag-and-drop/drag-and-drop.component';
 import { FormUtil } from '../../utils/form.utils';
 import { LoginDTO } from '../../models/login.dto';
 import { requiredsCommons } from '../../consts/requireds.commons';
-import { ErroComponent } from '../../components/erro/erro.component';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -85,8 +83,8 @@ export class LoginComponent implements OnInit {
     this.authService.login(req).subscribe({
       complete: () => {},
       next: (res) => {
-        if (res.token) {
-          localStorage.setItem('token', res.token);
+        if (res.body.accessToken) {
+          localStorage.setItem('token', res.body.accessToken);
           this.notification('Logado com sucesso.');
           this.redirectionTo('home-admin');
         }

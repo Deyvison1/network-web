@@ -46,7 +46,7 @@ export class ProfileComponent implements OnInit {
   initForm() {
     this.form = this.fb.group({
       id: [],
-      login: [
+      nick: [
         '',
         [
           Validators.required,
@@ -54,7 +54,7 @@ export class ProfileComponent implements OnInit {
           Validators.maxLength(20),
         ],
       ],
-      senha: [
+      password: [
         '',
         [
           Validators.required,
@@ -92,8 +92,8 @@ export class ProfileComponent implements OnInit {
     this.userService.findByLogin(userName).subscribe({
       next: (resp) => {
         this.form.patchValue({
-          login: resp.login,
-          id: resp.id,
+          nick: resp.nick,
+          uuid: resp.uuid,
         });
         this.form.disable();
       },

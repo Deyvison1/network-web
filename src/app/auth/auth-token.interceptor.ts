@@ -29,6 +29,7 @@ export const AuthTokenInterceptor: HttpInterceptorFn = (req, next) => {
       error: (err: HttpErrorResponse) => {
         if (err.status === 401) {
           router.redirectionTo('/home');
+          localStorage.removeItem('token');
         }
         if (err.status === 403) {
           router.redirectionTo('/forbidden');

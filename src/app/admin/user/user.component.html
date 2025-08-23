@@ -2,7 +2,7 @@
   <div class="d-flex justify-content-between p-3">
     <h2>Usuario</h2>
     <button
-      appAuthRole
+      [appAuthRole]="roles"
       matTooltip="Salvar"
       class="btn btn-primary"
       (click)="openDialog()"
@@ -18,31 +18,35 @@
       (matSortChange)="changeSortBy($event)"
       class="mat-elevation-z8"
     >
-      <ng-container matColumnDef="login">
+      <ng-container matColumnDef="nick">
         <th
           mat-header-cell
           *matHeaderCellDef
           mat-sort-header
-          sortActionDescription="Ordernar pelo login"
+          sortActionDescription="Ordernar pelo nick"
         >
-          Nome
+          Nick
         </th>
-        <td mat-cell *matCellDef="let element">{{ element.login }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.nick }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="role">
+      <ng-container matColumnDef="roles">
         <th
           mat-header-cell
           *matHeaderCellDef
           mat-sort-header
-          sortActionDescription="Sort by name"
+          sortActionDescription="Sort by roles"
         >
           Papel
         </th>
-        <td mat-cell *matCellDef="let element">{{ element.role }}</td>
+        <td mat-cell *matCellDef="let element">
+          @for (role of element.roles; track $index) {
+          {{ role.name }}
+          }
+        </td>
       </ng-container>
 
-      <ng-container matColumnDef="createdAt">
+      <ng-container matColumnDef="created">
         <th
           mat-header-cell
           *matHeaderCellDef
@@ -52,11 +56,11 @@
           Dt. Criação
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.createdAt | date : "dd/MM/yyyy HH:mm:ss" }}
+          {{ element.created | date : "dd/MM/yyyy HH:mm:ss" }}
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="updatedAt">
+      <ng-container matColumnDef="updated">
         <th
           mat-header-cell
           *matHeaderCellDef
@@ -66,7 +70,7 @@
           Dt. Atualização
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.updatedAt | date : "dd/MM/yyyy HH:mm:ss" }}
+          {{ element.updated | date : "dd/MM/yyyy HH:mm:ss" }}
         </td>
       </ng-container>
 
@@ -80,7 +84,7 @@
         <td mat-cell *matCellDef="let element" class="teste">
           <div class="btn-group">
             <button
-              appAuthRole
+              [appAuthRole]="roles"
               matTooltip="Editar usuario"
               class="btn btn-secondary btn-sm"
               (click)="openDialog(element)"
@@ -88,10 +92,10 @@
               <i class="fa-regular fa-pen-to-square"></i>
             </button>
             <button
-              appAuthRole
+              [appAuthRole]="roles"
               matTooltip="Deletar usuario"
               class="btn btn-danger btn-sm"
-              (click)="openDialogDeleteUser(element.id)"
+              (click)="openDialogDeleteUser(element.uuid)"
             >
               <i class="fa-regular fa-trash-can"></i>
             </button>

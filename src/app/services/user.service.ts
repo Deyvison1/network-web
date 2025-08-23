@@ -33,11 +33,11 @@ export class UserService extends HttpService {
     return this.http.get<UserDTO>(`${this.url}/get-login/${login}`);
   }
 
-  deleteUser(id?: number) {
-    return this.http.delete(`${this.url}/${id}`);
+  deleteUser(uuid: string) {
+    return this.http.delete(`${this.url}/${uuid}`);
   }
 
   editUserPartial(user: UserDTO): Observable<UserDTO> {
-    return this.http.patch(`${this.url}/${user.id}`, user);
+    return this.http.patch(`${this.url}/${user.uuid}`, user);
   }
 }
