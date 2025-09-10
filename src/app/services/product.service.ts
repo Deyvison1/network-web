@@ -1,3 +1,4 @@
+import { PageResponseDTO } from './../models/interfaces/page-response.dto';
 import { HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -14,11 +15,15 @@ export class ProductService extends HttpService {
 
   getAllProductsPage(
     pageConfig: PageConfig
-  ): Observable<HttpResponse<ProductDTO[]>> {
-    return this.http.get<ProductDTO[]>(
-      `${this.url}?page=${pageConfig.pageIndex}&size=${pageConfig.pageSize}`,
+  ): Observable<HttpResponse<PageResponseDTO<ProductDTO[]>>> {
+    return this.http.get<PageResponseDTO<ProductDTO[]>>(
+      `${this.url}?page=${pageConfig.pageIndex}&size=${pageConfig.pageSize}&sort=${pageConfig.sortBy}`,
       { observe: 'response' }
     );
+  }
+
+  getByUUid(uuid: string): Observable<ProductDTO> {
+    return this.http.get<ProductDTO>(`${this.url}/${uuid}`);
   }
 
   getAllProducts(): Observable<ProductDTO[]> {
@@ -29,11 +34,11 @@ export class ProductService extends HttpService {
     return this.http.post<ProductDTO>(`${this.url}`, product);
   }
 
-  editProduct(product: ProductDTO): Observable<ProductDTO> {
-    return this.http.put<ProductDTO>(`${this.url}`, product);
+  editProduct(uuid: string, product: ProductDTO): Observable<ProductDTO> {
+    return this.http.put<ProductDTO>(`${this.url}/${uuid}`, product);
   }
 
-  deleteProduct(productId: number): Observable<ProductDTO> {
-    return this.http.delete<ProductDTO>(`${this.url}/${productId}`);
+  deleteProduct(uuid: string): Observable<ProductDTO> {
+    return this.http.delete<ProductDTO>(`${this.url}/${uuid}`);
   }
 }

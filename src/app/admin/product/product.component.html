@@ -1,0 +1,7 @@
+<app-product-list
+  [totalItens]="totalItens"
+  (refreshDataSource)="getAllProducts($event)"
+  [setDataSource]="dataSource"
+  (openDialogProductEmitter)="openDialogProduct($event)"
+  (openDialogDeleteProductEmitter)="openDialogDeleteProduct($event)"
+></app-product-list>

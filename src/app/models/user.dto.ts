@@ -5,8 +5,8 @@ export class UserDTO {
     public email?: string,
     public roles?: string[],
     public userName?: string,
-    public uuid?: number,
-    public createdAt?: Date,
-    public updatedAt?: Date
+    public uuid?: string,
+    public created?: Date,
+    public updated?: Date
   ) {}
 }

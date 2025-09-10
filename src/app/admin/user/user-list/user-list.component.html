@@ -1,0 +1,118 @@
+<mat-card class="mt-5 container">
+  <div class="d-flex justify-content-between p-3">
+    <h2>Usuarios</h2>
+    <button
+      [appAuthRole]="roles"
+      matTooltip="Salvar"
+      class="btn btn-primary"
+      (click)="openDialog()"
+    >
+      <i class="fa-solid fa-plus"></i>
+    </button>
+  </div>
+  <mat-card-content class="mt-4">
+    <table
+      mat-table
+      [dataSource]="dataSource()"
+      matSort
+      (matSortChange)="changeSortBy($event)"
+      class="mat-elevation-z8"
+    >
+      <ng-container matColumnDef="nick">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Ordernar pelo nick"
+        >
+          Nick
+        </th>
+        <td mat-cell *matCellDef="let element">{{ element.nick }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="roles">
+        <th mat-header-cell *matHeaderCellDef>Papels</th>
+        <td mat-cell *matCellDef="let element">
+          @for (role of element.roles; track $index) {
+          {{ role.name }}
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="created">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by weight"
+        >
+          Dt. Criação
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.created | date : "dd/MM/yyyy HH:mm:ss" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="updated">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by symbol"
+        >
+          Dt. Atualização
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.updated | date : "dd/MM/yyyy HH:mm:ss" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by symbol"
+        ></th>
+        <td mat-cell *matCellDef="let element">
+          <div class="btn-group">
+            <button
+              [appAuthRole]="roles"
+              matTooltip="Editar usuario"
+              class="btn btn-secondary btn-sm"
+              (click)="openDialog(element)"
+            >
+              <i class="fa-regular fa-pen-to-square"></i>
+            </button>
+            <button
+              [appAuthRole]="roles"
+              matTooltip="Deletar usuario"
+              class="btn btn-danger btn-sm"
+              (click)="openDialogDeleteUser(element.uuid)"
+            >
+              <i class="fa-regular fa-trash-can"></i>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <!-- 🔽 Adicione esta linha -->
+      <tr class="mat-row" *matNoDataRow>
+        <td
+          class="mat-cell text-center p-4"
+          [attr.colspan]="displayedColumns.length"
+        >
+          Nenhum registro encontrado.
+        </td>
+      </tr>
+    </table>
+    <mat-paginator
+      #paginator
+      (page)="changePage()"
+      [length]="totalItens"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+    ></mat-paginator>
+  </mat-card-content>
+</mat-card>

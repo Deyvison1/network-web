@@ -21,6 +21,7 @@ import { FormUtil } from '../../utils/form.utils';
 import { LoginDTO } from '../../models/login.dto';
 import { requiredsCommons } from '../../consts/requireds.commons';
 import { AuthService } from '../../services/auth.service';
+import { ActionTypeNotification } from '../../consts/enums/action-type-notification.enum';
 
 @Component({
   selector: 'app-login',
@@ -58,10 +59,6 @@ export class LoginComponent implements OnInit {
     );
   }
 
-  notification(msg: string) {
-    this.notificationService.notificationSimple(msg);
-  }
-
   redirectionTo(router: string) {
     if (router != '') {
       this.router.redirectionTo(router);
@@ -85,14 +82,14 @@ export class LoginComponent implements OnInit {
       next: (res) => {
         if (res.body.accessToken) {
           localStorage.setItem('token', res.body.accessToken);
-          this.notification('Logado com sucesso.');
+          this.notificationService.notification('Logado com sucesso.', ActionTypeNotification.SUCCESS);
           this.redirectionTo('home-admin');
         }
         this.cancel();
       },
       error: (err) => {
         if (err.status == 401) {
-          this.notification('Usuario e(ou) senha invalido.');
+          this.notificationService.notification('Usuario e(ou) senha invalido.', ActionTypeNotification.ERRO);
         }
         this.cancel();
       },

@@ -1,33 +1,69 @@
-import { HttpResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpParams, HttpResponse } from '@angular/common/http';
+import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { UserDTO } from '../models/user.dto';
 import { HttpService } from './http.service';
 import PageConfig from '../models/interfaces/page.config';
+import { PageResponseDTO } from '../models/interfaces/page-response.dto';
+import { UserFilterDTO } from '../models/interfaces/user-filter.dto';
+import { ActionTypeBodyDTO } from '../models/interfaces/action-type-body.dto';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService extends HttpService {
   private readonly url: string = environment.urlApi.concat('/users');
+  private userUpdatedSignal = signal<ActionTypeBodyDTO<UserDTO> | null>(null);
+
+
+  emitUserUpdate(user: ActionTypeBodyDTO<UserDTO>) {
+    this.userUpdatedSignal.set(user);
+  }
+
+  onUserUpdate = this.userUpdatedSignal.asReadonly();
 
   insertUser(user: UserDTO): Observable<UserDTO> {
     return this.http.post<UserDTO>(`${this.url}`, user);
   }
 
-  updateUser(user: UserDTO): Observable<UserDTO> {
-    return this.http.put<UserDTO>(`${this.url}`, user);
+  updateUser(userId: string, user: UserDTO): Observable<UserDTO> {
+    return this.http.put<UserDTO>(`${this.url}/${userId}`, user);
   }
 
-  getUsersPagination(
-    pageConfig: PageConfig
-  ): Observable<HttpResponse<UserDTO[]>> {
-    return this.http.get<UserDTO[]>(
-      `${this.url}?page=${pageConfig.pageIndex}&size=${pageConfig.pageSize}&sortby=${pageConfig.sortBy}`,
-      { observe: 'response' }
-    );
+  updateNickAndPasswordUser(userId: string, user: UserDTO): Observable<UserDTO> {
+    return this.http.patch<UserDTO>(`${this.url}/${userId}`, {
+      nick: user.nick,
+      password: user.password
+    });
   }
+
+  getUsersPagination(pageConfig: PageConfig, filters?: UserFilterDTO): Observable<HttpResponse<PageResponseDTO<UserDTO[]>>> {
+  let params = new HttpParams()
+    .set('page', pageConfig.pageIndex)
+    .set('size', pageConfig.pageSize)
+    .set('sort', pageConfig.sortBy);
+
+  if (filters?.nick) {
+    params = params.set('nick', filters.nick);
+  }
+
+  if(filters?.created) {
+    params = params.set('created', filters.created.toString());
+  }
+
+  if (filters?.uuids?.length) {
+    filters.uuids.forEach((roleId: string) => {
+      params = params.append('uuids', roleId); 
+    });
+  }
+
+  return this.http.get<PageResponseDTO<UserDTO[]>>(`${this.url}`, {
+    params,
+    observe: 'response'
+  });
+}
+
 
   findByLogin(login: string): Observable<UserDTO> {
     return this.http.get<UserDTO>(`${this.url}/get-login/${login}`);

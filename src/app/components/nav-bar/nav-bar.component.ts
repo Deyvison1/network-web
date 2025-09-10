@@ -1,4 +1,3 @@
-import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -15,12 +14,19 @@ import { RouterService } from '../../services/router.service';
 import { MatCardModule } from '@angular/material/card';
 import { RouterOutlet } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
-interface ItemMenu {
+interface SimpleMenuItem {
   icon: string;
   label: string;
-  tooltip?: string,
+  tooltip?: string;
   function(): void;
 }
+
+interface SubMenuItem extends SimpleMenuItem {
+  isSubmenu: true;
+  children: SimpleMenuItem[];
+}
+
+type MenuItem = SimpleMenuItem | SubMenuItem;
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -35,22 +41,23 @@ interface ItemMenu {
     MatListModule,
     MatCardModule,
     RouterOutlet,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.scss',
 })
 export class NavBarComponent implements OnInit {
-  private readonly observer = inject(BreakpointObserver);
   private readonly dialogService = inject(MatDialog);
   private readonly authService = inject(AuthService);
   private readonly router = inject(RouterService);
+  private readonly roles: string[] = ['ADMIN', 'USER'];
   nameApplication = 'Supreme Network Web';
   isLoggedIn: boolean;
   userName: string;
-  itensMenu: ItemMenu[] = [];
-  itensMenuSideBar: ItemMenu[] = [];
+  itensMenu: MenuItem[] = [];
+  itensMenuSideBar: MenuItem[] = [];
 
+  openedSubmenus: { [key: string]: boolean } = {};
   isSmallScreen = signal(false);
 
   ngOnInit(): void {
@@ -78,8 +85,20 @@ export class NavBarComponent implements OnInit {
     ];
   }
 
+  isSubmenuItem(item: MenuItem): item is SubMenuItem {
+    return 'children' in item && Array.isArray(item.children);
+  }
+
   redirectionToUrl(url: string) {
     this.router.redirectionTo(url);
+  }
+
+  toggleSubmenu(menu: string) {
+    this.openedSubmenus[menu] = !this.openedSubmenus[menu];
+  }
+
+  isSubmenuOpen(menu: string): boolean {
+    return this.openedSubmenus[menu];
   }
 
   initItensMenuSideBar() {
@@ -107,6 +126,21 @@ export class NavBarComponent implements OnInit {
         function: () => {
           this.redirectionToUrl('/user');
         },
+        isSubmenu: true,
+        children: [
+          {
+            label: 'Usuários',
+            icon: 'group',
+            tooltip: 'Gerenciar usuarios',
+            function: () => this.redirectionToUrl('/user'),
+          },
+          {
+            label: 'Papeis',
+            icon: 'list',
+            tooltip: 'Visualizar usuários',
+            function: () => this.redirectionToUrl('/role'),
+          },
+        ],
       },
     ];
   }
@@ -135,6 +169,10 @@ export class NavBarComponent implements OnInit {
   getInformationToken() {
     const token: InformationsTokenDTO = this.authService.decodePayloadJWT();
     this.userName = token.sub;
+  }
+
+  getInformationCompletToken(): InformationsTokenDTO {
+    return this.authService.decodePayloadJWT();
   }
 
   getIsLoggedIn() {

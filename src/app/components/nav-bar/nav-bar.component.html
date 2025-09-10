@@ -12,16 +12,34 @@
     @if (isLoggedIn) {
     <h5 class="p-2 text-center mt-2">{{ nameApplication | titlecase }}</h5>
     <mat-nav-list>
-      @for (item of itensMenuSideBar; track item) {
+      @for (item of itensMenuSideBar; track item) { @if (!isSubmenuItem(item)) {
       <button mat-menu-item (click)="item.function()">
         <mat-icon [matTooltip]="item.tooltip">{{ item.icon }}</mat-icon>
         <span>{{ item.label }}</span>
       </button>
-      }
+      } @else {
+      <!-- Item com submenu -->
+      <button mat-menu-item (click)="toggleSubmenu(item.label)">
+        <mat-icon [matTooltip]="item.tooltip">{{ item.icon }}</mat-icon>
+        <span>{{ item.label }}</span>
+        <mat-icon class="">
+          {{ isSubmenuOpen(item.label) ? "expand_less" : "expand_more" }}
+        </mat-icon>
+      </button>
+
+      @if (isSubmenuOpen(item.label)) {
+      <div class="submenu">
+        @for (sub of item.children; track sub) {
+        <button mat-menu-item (click)="sub.function()">
+          <mat-icon [matTooltip]="sub.tooltip">{{ sub.icon }}</mat-icon>
+          <span>{{ sub.label }}</span>
+        </button>
+        }
+      </div>
+      } } }
     </mat-nav-list>
     }
   </mat-sidenav>
-
   <mat-sidenav-content>
     <!-- Conteúdo principal -->
     <div class="main-content">

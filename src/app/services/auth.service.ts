@@ -6,8 +6,6 @@ import { HttpService } from './http.service';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LoginDTO } from '../models/login.dto';
-import { TokenDTO } from '../models/interfaces/token.dto';
-import { ResponseDTO } from '../models/interfaces/response.dto';
 import { ResponseTokenDTO } from '../models/interfaces/token-response.dto';
 
 @Injectable({
@@ -15,7 +13,7 @@ import { ResponseTokenDTO } from '../models/interfaces/token-response.dto';
 })
 export class AuthService extends HttpService {
   private readonly url: string = environment.urlApi.concat('/auth');
-
+  private readonly roles: string[] = ['ADMIN', 'USER'];
   private readonly router = inject(RouterService);
   public getToken(): string {
     return localStorage.getItem('token');
@@ -27,6 +25,23 @@ export class AuthService extends HttpService {
 
   public decodePayloadJWT(): InformationsTokenDTO {
     return jwtDecode(this.getToken());
+  }
+
+  hasAccess(): boolean {
+    return this.hasAnyRole(this.roles, this.decodePayloadJWT().roles);
+  }
+
+  private hasAnyRole(userRoles: string[], requiredRoles: string[]): boolean {
+    return requiredRoles.some(role => userRoles.includes(role));
+  }
+
+  isRole(rolesComponent: string[]) {
+    const allowedRoles = this.roles;
+    const userRoles = ['admin'];
+
+    const hasPermission = userRoles.some((role) => allowedRoles.includes(role));
+
+    return hasPermission;
   }
 
   isLoggedIn() {

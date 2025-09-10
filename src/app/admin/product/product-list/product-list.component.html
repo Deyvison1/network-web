@@ -1,8 +1,8 @@
 <mat-card class="mt-5 container">
   <mat-card-content>
     <div class="d-flex justify-content-between p-3">
-      <h2>Categoria</h2>
-      <button appAuthRole matTooltip="Salvar" class="btn btn-primary" (click)="openDialogCategory(ActionType.INSERT, null)">
+      <h2>Produtos</h2>
+      <button appAuthRole matTooltip="Salvar" class="btn btn-primary" (click)="openDialogProduct(ActionType.INSERT, null)">
         <i class="fa-solid fa-plus"></i>
       </button>
     </div>
@@ -18,11 +18,11 @@
           mat-header-cell
           *matHeaderCellDef
           mat-sort-header
-          sortActionDescription="Ordernar pelo login"
+          sortActionDescription="Ordernar pelo nome"
         >
           Nome
         </th>
-        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+        <td mat-cell *matCellDef="let element" [matTooltip]="element.category.name">{{ element.name }}</td>
       </ng-container>
 
       <ng-container matColumnDef="description">
@@ -48,17 +48,17 @@
           <div class="btn-group">
             <button
               appAuthRole
-              matTooltip="Editar categoria"
+              matTooltip="Editar produto"
               class="btn btn-secondary btn-sm"
-              (click)="openDialogCategory(ActionType.EDIT, element)"
+              (click)="openDialogProduct(ActionType.EDIT, element)"
             >
               <i class="fa-regular fa-pen-to-square"></i>
             </button>
             <button
               appAuthRole
-              matTooltip="Deletar categoria"
+              matTooltip="Deletar produto"
               class="btn btn-danger btn-sm"
-              (click)="openDialogDeleteCategory(element.uuid)"
+              (click)="openDialogDeleteProduct(element.uuid)"
             >
               <i class="fa-regular fa-trash-can"></i>
             </button>

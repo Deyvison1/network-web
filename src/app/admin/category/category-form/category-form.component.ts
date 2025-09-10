@@ -8,7 +8,11 @@ import { DragAndDropComponent } from '../../../components/drag-and-drop/drag-and
 import { ErroComponent } from '../../../components/erro/erro.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActionTypeBodyDTO } from '../../../models/interfaces/action-type-body.dto';
-import { ActionType } from '../../../consts/enums/cction-type.enum';
+import { ActionType } from '../../../consts/enums/action-type.enum';
+import { MatCardModule } from '@angular/material/card';
+import { ICategoryDTO } from '../../../models/interfaces/i-category.dto';
+import { CategoryService } from '../../../services/category.service';
+import { CategoryCompletDTO } from '../../../models/interfaces/category-complet.dto';
 
 @Component({
   selector: 'app-category-form',
@@ -18,14 +22,17 @@ import { ActionType } from '../../../consts/enums/cction-type.enum';
     ReactiveFormsModule,
     DragAndDropComponent,
     ErroComponent,
+    MatCardModule
   ],
   templateUrl: './category-form.component.html',
   styleUrl: './category-form.component.scss',
 })
 export class CategoryFormComponent implements OnInit {
   private readonly requiredsCommons = requiredsCommons;
+  private readonly categoryService = inject(CategoryService);
   private readonly dialogRef = inject(MatDialogRef<CategoryFormComponent>);
-  data = inject<ActionTypeBodyDTO<CategoryDTO>>(MAT_DIALOG_DATA);
+  data = inject<ActionTypeBodyDTO<string>>(MAT_DIALOG_DATA);
+  categoryCompletSelected: CategoryCompletDTO;
 
   title: string = 'Adicionar Categoria';
 
@@ -33,9 +40,14 @@ export class CategoryFormComponent implements OnInit {
 
   ngOnInit() {
     this.initForm();
+    this.setTitle();
   }
 
-  close(categoryDTO?: CategoryDTO) {
+  setTitle() {
+    this.title = (this.data.body)? 'Atualizar Categoria' : 'Adicionar Categoria';
+  }
+
+  close(categoryDTO?: ICategoryDTO) {
     this.dialogRef.close(categoryDTO);
   }
 
@@ -45,12 +57,19 @@ export class CategoryFormComponent implements OnInit {
       this.requiredsCommons.requiredsCategory
     );
     if (this.data.actionType === ActionType.EDIT && this.data.body) {
-      this.form.patchValue(this.data.body);
+      this.categoryService.findByIdComplet(this.data.body).subscribe(
+        {
+          next: (categoryCompletDTO: CategoryCompletDTO) => {
+            this.categoryCompletSelected = categoryCompletDTO;
+            this.form.patchValue(this.categoryCompletSelected);
+          }
+        }
+      );
     }
   }
 
   saveCategory() {
-    const category: CategoryDTO = this.form.value;
+    const category: ICategoryDTO = this.form.value;
     this.close(category);
   }
 }

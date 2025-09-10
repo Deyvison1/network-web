@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, output } from '@angular/core';
 import {
+  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -11,6 +12,7 @@ import { UserDTO } from '../../../models/user.dto';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { DragAndDropComponent } from '../../../components/drag-and-drop/drag-and-drop.component';
+
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -18,12 +20,14 @@ import {
 } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ErroComponent } from '../../../components/erro/erro.component';
-import { RoleComponent } from '../role/role.component';
+import { RoleFormComponent } from '../role/role-form/role-form.component';
 import { RoleDTO } from '../../../models/role.dto';
 import { RoleService } from '../../../services/role.service';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOptionModule } from '@angular/material/core';
+import { UserService } from '../../../services/user.service';
+import { ActionType } from '../../../consts/enums/action-type.enum';
 
 export interface Data {
   userSelected: UserDTO;
@@ -51,6 +55,7 @@ export class UserFormComponent implements OnInit {
   private readonly dialogRef = inject(MatDialogRef<UserFormComponent>);
   private readonly dialogService = inject(MatDialog);
   private readonly roleService = inject(RoleService);
+  private readonly userService = inject(UserService);
   data = inject<Data>(MAT_DIALOG_DATA);
   form: FormGroup;
   labelPassowrd: string = 'Senha';
@@ -58,6 +63,7 @@ export class UserFormComponent implements OnInit {
   listRoles: RoleDTO[] = [];
   displaySelectedRoles: [];
   saveEmitter = output<UserDTO>();
+  readonly userCurrentPasswordControl = new FormControl(false);
 
   ngOnInit(): void {
     this.initForm();
@@ -87,7 +93,7 @@ export class UserFormComponent implements OnInit {
   }
 
   openRoleDialog() {
-    const dialog = this.dialogService.open(RoleComponent, {
+    const dialog = this.dialogService.open(RoleFormComponent, {
       width: '600px',
     });
 
@@ -112,8 +118,10 @@ export class UserFormComponent implements OnInit {
 
   save() {
     const userDTO: UserDTO = this.form.getRawValue();
-    console.log(this.form);
-    this.closedDialog(userDTO);
+    this.userService.emitUserUpdate({
+      actionType: ActionType.INSERT,
+      body: userDTO
+    });
   }
 
   compareFn(role1: RoleDTO, role2: RoleDTO): boolean {

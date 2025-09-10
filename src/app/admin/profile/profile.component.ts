@@ -14,6 +14,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { UserDTO } from '../../models/user.dto';
 import { NotificationService } from '../../services/notification.service';
 import { ErroComponent } from '../../components/erro/erro.component';
+import { ActionTypeNotification } from '../../consts/enums/action-type-notification.enum';
 
 @Component({
   selector: 'app-profile',
@@ -36,6 +37,7 @@ export class ProfileComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   form: FormGroup;
   userName: string = '';
+  user: UserDTO;
   isActiveEditForm: boolean = false;
 
   ngOnInit(): void {
@@ -45,7 +47,7 @@ export class ProfileComponent implements OnInit {
 
   initForm() {
     this.form = this.fb.group({
-      id: [],
+      uuid: [],
       nick: [
         '',
         [
@@ -75,22 +77,22 @@ export class ProfileComponent implements OnInit {
   }
 
   save() {
-    const user: UserDTO = this.form.value;
-    this.userService.editUserPartial(user).subscribe({
-      next: (resp) => {
-        this.editProfile();
-        this.notificationService.notificationSimple(
-          'Usuário atualizado com sucesso!'
-        );
-      },
-    });
+    const user: UserDTO = this.form.getRawValue();
+    this.userService.updateNickAndPasswordUser(user.uuid, user).subscribe(
+      {
+        next: (userDTO: UserDTO) => {
+          this.notificationService.notification('Sucesso ao atualizar seu perfil.', ActionTypeNotification.SUCCESS);
+        }
+      }
+    );
   }
 
   findByLogin() {
     const userName = this.authService.decodePayloadJWT().sub;
     this.userName = userName;
     this.userService.findByLogin(userName).subscribe({
-      next: (resp) => {
+      next: (resp: UserDTO) => {
+        this.user = resp;
         this.form.patchValue({
           nick: resp.nick,
           uuid: resp.uuid,

@@ -1,0 +1,48 @@
+<mat-card class="mt-5 container">
+  <mat-card-content>
+    <div class="d-flex justify-content-between pb-3">
+      <h2>Filtrar Usuarios</h2>
+      <div >
+        <button type="submit" class="btn btn-warning" (click)="limpar()">
+          Limpar
+        </button>
+
+        <button type="submit" class="btn btn-success ml-lg-5" (click)="search()">
+          Pesquisar
+        </button>
+      </div>
+    </div>
+
+    <form [formGroup]="form">
+      <div class="row">
+        <div class="col">
+          <label for="nick">Nick</label>
+          <input type="text" class="form-control" formControlName="nick" placeholder="Informe o Nick"/>
+        </div>
+        <div class="col">
+          <mat-label>Papels</mat-label>
+          <mat-select
+            [matTooltip]="getSelectedRolesMatTooltip()"
+            class="form-control"
+            formControlName="roles"
+            multiple
+            placeholder="Informe os Papels"
+          >
+            <mat-select-trigger>
+              {{ getSelectedRolesLabel() }}
+            </mat-select-trigger>
+
+            @for (role of roles; track role) {
+            <mat-option [value]="role">{{ role.name }}</mat-option>
+            }
+          </mat-select>
+          <app-erro [setControl]="form.controls['roles']"></app-erro>
+        </div>
+        <div class="col">
+          <label for="created">Data de Criação</label>
+          <input type="date" formControlName="created" class="form-control" />
+        </div>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

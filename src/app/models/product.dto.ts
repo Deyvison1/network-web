@@ -2,7 +2,7 @@ import { CategoryDTO } from './category.dto';
 
 export class ProductDTO {
   constructor(
-    public id?: number,
+    public uuid?: string,
     public name?: string,
     public speedDownload?: number,
     public speedUpload?: number,

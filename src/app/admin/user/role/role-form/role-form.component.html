@@ -1,0 +1,20 @@
+<app-drag-and-drop [title]="title" (closedDialog)="close()"></app-drag-and-drop>
+<form [formGroup]="form" class="p-4" (ngSubmit)="save()">
+  <div class="row">
+    <div class="col-6">
+      <label for="name">Nome</label>
+      <input type="text" class="form-control" formControlName="name"/>
+      <app-erro [setControl]="form.get('name')"></app-erro>
+    </div>
+    <div class="col-6">
+      <label for="description">Descrição</label>
+      <input type="text" class="form-control" formControlName="description"/>
+      <app-erro [setControl]="form.get('description')"></app-erro>
+    </div>
+  </div>
+  <div class="mt-2 d-flex justify-content-between">
+    <button matTooltip="Salvar" class="btn btn-primary" [disabled]="form.invalid" (click)="save()">
+      <i class="fa-regular fa-floppy-disk"></i>
+    </button>
+  </div>
+</form>

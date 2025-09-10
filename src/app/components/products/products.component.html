@@ -3,7 +3,7 @@
   class="container p-4 bg-white rounded"
 >
   <div class="d-flex justify-content-around">
-    @for (product of products; track product.id) {
+    @for (product of products; track product.uuid) {
     <mat-card class="mat-card-color p-3">
       <span
         ><strong>{{ product.category?.name }}</strong> </span
@@ -18,9 +18,9 @@
         } @if (product.taxaAdesao) {
         <span>Adesão: {{ product.taxaAdesao | currency : "BRL" }} <br /></span>
         } @if (!product.taxaAdesao) {
-        <span>Sem Taxa de Adesão</span>
-        <span> Valor: {{ product.value | currency : "BRL" }} </span>
+        <span>Sem Taxa de Adesão</span> <br />
         }
+        <span> Valor: {{ product.value | currency : "BRL" }} </span>
         <br />
         <br />
       </div>

@@ -1,0 +1,133 @@
+<app-drag-and-drop [title]="title" (closedDialog)="close()"></app-drag-and-drop>
+<form [formGroup]="form" class="p-4">
+  <div class="row">
+    <div class="col-4">
+      <label for="name">Nome:</label>
+      <input
+        [ngClass]="{
+          'is-invalid': form.get('name').errors && form.get('name').touched
+        }"
+        class="form-control"
+        type="text"
+        formControlName="name"
+        placeholder="Nome"
+      />
+      <app-erro [setControl]="form.get('name')"></app-erro>
+    </div>
+    <div class="col">
+      <label for="speedDownload">Velocidade de Download:</label>
+      <input
+        [ngClass]="{
+          'is-invalid':
+            form.get('speedDownload').errors &&
+            form.get('speedDownload').touched
+        }"
+        class="form-control"
+        type="number"
+        formControlName="speedDownload"
+        placeholder="Velocidade de Download"
+      />
+      <app-erro [setControl]="form.get('speedDownload')"></app-erro>
+    </div>
+
+    <div class="col">
+      <label for="speedUpload">Velocidade de Upload:</label>
+      <input
+        [ngClass]="{
+          'is-invalid':
+            form.get('speedUpload').errors && form.get('speedUpload').touched
+        }"
+        class="form-control"
+        type="number"
+        formControlName="speedUpload"
+        placeholder="Velocidade de Upload"
+      />
+      <app-erro [setControl]="form.get('speedUpload')"></app-erro>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <label for="taxaAdesao">Taxa de Adesão:</label>
+      <input
+        [ngClass]="{
+          'is-invalid':
+            form.get('taxaAdesao').errors && form.get('taxaAdesao').touched
+        }"
+        class="form-control"
+        type="number"
+        formControlName="taxaAdesao"
+        placeholder="Taxa de Adesão"
+      />
+      <app-erro [setControl]="form.get('taxaAdesao')"></app-erro>
+    </div>
+    <div class="col">
+      <label for="valueWifi">Valor Wifi:</label>
+      <input
+        [ngClass]="{
+          'is-invalid':
+            form.get('valueWifi').errors && form.get('valueWifi').touched
+        }"
+        class="form-control"
+        type="number"
+        formControlName="valueWifi"
+        placeholder="Valor Wifi"
+      />
+      <app-erro [setControl]="form.get('valueWifi')"></app-erro>
+    </div>
+    <div class="col">
+      <label for="value">Valor:</label>
+      <input
+        [ngClass]="{
+          'is-invalid': form.get('value').errors && form.get('value').touched
+        }"
+        class="form-control"
+        type="number"
+        formControlName="value"
+        placeholder="Valor"
+      />
+      <app-erro [setControl]="form.get('value')"></app-erro>
+    </div>
+  </div>
+  <div class="row">
+    <div>
+      <label for="description">Descrição</label>
+      <textarea
+        [ngClass]="{
+          'is-invalid':
+            form.get('description').errors && form.get('description').touched
+        }"
+        class="form-control"
+        name="description"
+        cols="30"
+        formControlName="description"
+      ></textarea>
+      <app-erro [setControl]="form.get('description')"></app-erro>
+    </div>
+  </div>
+  <div class="mt-2 row">
+    <div class="col">
+      <label for="category">Categoria</label>
+      <select
+        [ngClass]="{
+          'is-invalid':
+            form.get('category').errors && form.get('category').touched
+        }"
+        class="form-control"
+        formControlName="category"
+        [compareWith]="compareFn"
+      >
+        <option *ngFor="let category of categories" [ngValue]="category">
+          {{ category.name }}
+        </option>
+      </select>
+      <app-erro [setControl]="form.get('category')"></app-erro>
+    </div>
+  </div>
+
+  <div class="mt-2 d-flex justify-content-between">
+    <button (click)="close()" class="btn btn-secondary">Fechar</button>
+    <button [disabled]="!form.valid" (click)="save()" class="btn btn-success">
+      Salvar
+    </button>
+  </div>
+</form>

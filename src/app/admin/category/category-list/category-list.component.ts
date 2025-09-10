@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   inject,
+  input,
   Input,
   OnInit,
   output,
@@ -12,15 +13,17 @@ import {
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import PageConfig from '../../../models/interfaces/page.config';
 import { pageCommons } from '../../../consts/page.commons';
 import { CategoryService } from '../../../services/category.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DeleteDialogComponent } from '../../../components/delete-dialog/delete-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { ActionType } from '../../../consts/enums/cction-type.enum';
+import { ActionType } from '../../../consts/enums/action-type.enum';
 import { ActionTypeBodyDTO } from '../../../models/interfaces/action-type-body.dto';
+import { ActionTypeNotification } from '../../../consts/enums/action-type-notification.enum';
+import { ICategoryDTO } from '../../../models/interfaces/i-category.dto';
 
 @Component({
   selector: 'app-category-list',
@@ -40,10 +43,10 @@ export class CategoryListComponent implements OnInit {
   private readonly categoryService = inject(CategoryService);
   private readonly notificationService = inject(NotificationService);
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  totalItens = input();
+  @ViewChild(MatSort, { static: true }) sort: Sort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   pageCommons: PageConfig = pageCommons;
-  totalItens: number | string = '';
   @Input() set setDataSource(data: MatTableDataSource<CategoryDTO>) {
     if (data) this.dataSource = data;
   }
@@ -53,26 +56,28 @@ export class CategoryListComponent implements OnInit {
 
   dataSource: MatTableDataSource<CategoryDTO>;
   displayedColumns: string[] = ['name', 'description', 'actions'];
-  openDialogCategoryEmitter = output<ActionTypeBodyDTO<CategoryDTO>>();
-
+  openDialogCategoryEmitter = output<ActionTypeBodyDTO<string>>();
+  
   refreshDataSource = output<PageConfig>();
 
   ngOnInit(): void {
     this.getCategories();
   }
 
-  getCategories() {
+  getCategories(sortBy?: string) {
     const paginator: PageConfig = {
       pageIndex: this.paginator.pageIndex,
-      pageSize: this.paginator.pageSize,
-      sortBy: '',
+      pageSize: (this.paginator.pageSize)? this.paginator.pageSize : this.pageCommons.pageSize,
+      sortBy: !sortBy ? this.pageCommons.sortBy : sortBy,
     };
-
     this.refreshDataSource.emit(paginator);
   }
 
-  openDialogCategory(actionType: ActionType, category: CategoryDTO) {
-    this.openDialogCategoryEmitter.emit({actionType: actionType, body: category});
+  openDialogCategory(actionType: ActionType, category: ICategoryDTO) {
+    this.openDialogCategoryEmitter.emit({
+      actionType: actionType,
+      body: category?.uuid,
+    });
   }
 
   openDialogDeleteCategory(uuid: string) {
@@ -89,19 +94,28 @@ export class CategoryListComponent implements OnInit {
   delete(uuid: string) {
     this.categoryService.deleteCategory(uuid).subscribe({
       next: () => {
-        this.notificationService.notificationComplet(
+        this.notificationService.notification(
           'Deletado com sucesso',
-          'OK',
-          5000
+          ActionTypeNotification.SUCCESS
         );
         this.getCategories();
       },
     });
   }
 
-  changePage() {
-    this.getCategories();
+   changePage() {
+    const sortBy = this.setSortBy(this.sort);
+    this.getCategories(sortBy);
   }
 
-  changeSortBy(event: any) {}
+  setSortBy(sort: Sort) {
+    this.sort = sort;
+    return !sort.direction ? 'created' : sort.active + ',' + sort.direction;
+  }
+
+  changeSortBy(sort: Sort) {
+    this.sort = sort;
+    const sortBy = this.setSortBy(sort);
+    this.getCategories(sortBy);
+  }
 }

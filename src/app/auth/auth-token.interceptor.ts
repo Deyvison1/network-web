@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { RouterService } from '../services/router.service';
 import { tap } from 'rxjs';
 import { NotificationService } from '../services/notification.service';
+import { ActionTypeNotification } from '../consts/enums/action-type-notification.enum';
 
 export const AuthTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(RouterService);
@@ -30,17 +31,18 @@ export const AuthTokenInterceptor: HttpInterceptorFn = (req, next) => {
         if (err.status === 401) {
           router.redirectionTo('/home');
           localStorage.removeItem('token');
-        }
-        if (err.status === 403) {
+        } else if (err.status === 403) {
           router.redirectionTo('/forbidden');
-        }
-        if (err.status === 404 || err.status === 400) {
-          notificationService.notificationSimple(err.error.message);
-        }
-        if (err.status === 500) {
-          notificationService.notificationSimple(
-            'Aconteceu um erro no servidor. Tente novamente ou contate a equipe técnica.'
+        } else if (err.status === 404 || err.status === 400) {
+          notificationService.notification(err.error.message, ActionTypeNotification.ERRO);
+        } else if (err.status === 500) {
+          notificationService.notification(
+            'Aconteceu um erro no servidor. Tente novamente ou contate a equipe técnica.', ActionTypeNotification.ERRO
           );
+        } else if(err.status === 409) {
+          notificationService.notification(err.error, ActionTypeNotification.ERRO);
+        } else {
+          notificationService.notification('Error desconhecido, contate o administrador do sistema.', ActionTypeNotification.ERRO);
         }
       },
     })
