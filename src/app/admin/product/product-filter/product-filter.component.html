@@ -1,0 +1,129 @@
+<mat-card class="mt-5 container">
+  <mat-card-content>
+    <div class="d-flex justify-content-between pb-3">
+      <h2>Filtrar Produtos</h2>
+      <div>
+        <button type="submit" class="btn btn-warning" (click)="clear()">
+          Limpar
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-success ml-lg-5"
+          (click)="search()"
+        >
+          Pesquisar
+        </button>
+      </div>
+    </div>
+
+    <form [formGroup]="form">
+      <div class="row">
+        <div class="col">
+          <label for="name">Nome</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="name"
+            placeholder="Informe o Nome"
+          />
+        </div>
+        <div class="col">
+          <label for="description">Descrição</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="description"
+            placeholder="Informe a Descrição"
+          />
+        </div>
+        <div class="col">
+          <label for="created">Data de Criação</label>
+          <input type="date" formControlName="created" class="form-control" />
+        </div>
+      </div>
+      <mat-accordion>
+        <mat-expansion-panel
+          class="mt-2"
+          (opened)="panelOpenState.set(true)"
+          (closed)="panelOpenState.set(false)"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title class="color-warning">
+              Filtros avançados!
+            </mat-panel-title>
+            <mat-panel-description> </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="row">
+            <div class="col">
+              <label for="sppedDownload">Velocidade de Download</label>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="speedDownload"
+                placeholder="Velocidade de Download"
+              />
+            </div>
+            <div class="col">
+              <label for="sppedUpload">Velocidade de Upload</label>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="speedUpload"
+                placeholder="Velocidade de Upload"
+              />
+            </div>
+            <div class="col">
+              <label for="category">Categoria</label>
+              <input
+                type="text"
+                formControlName="category"
+                class="form-control"
+                placeholder="Categoria"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label for="taxaAdesao">Taxa de Adesão</label>
+              <input
+                type="number"
+                formControlName="taxaAdesao"
+                class="form-control"
+                placeholder="Taxa de Adesão"
+                (blur)="normalizePrice(form.controls['taxaAdesao'].value)"
+                step="0.01"
+                min="0"
+              />
+            </div>
+            <div class="col">
+              <label for="valueWifi">Valor Wifi</label>
+              <input
+                type="number"
+                formControlName="valueWifi"
+                class="form-control"
+                (blur)="normalizePrice(form.controls['valueWifi'].value)"
+                step="0.01"
+                min="0"
+                placeholder="Valor Wifi"
+              />
+            </div>
+            <div class="col">
+              <label for="value">Valor</label>
+              <input
+                type="number"
+                formControlName="value"
+                class="form-control"
+                placeholder="Valor"
+                (blur)="normalizePrice(form.controls['value'].value)"
+                step="0.01"
+                min="0"
+              />
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </form>
+  </mat-card-content>
+</mat-card>

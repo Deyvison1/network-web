@@ -28,10 +28,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOptionModule } from '@angular/material/core';
 import { UserService } from '../../../services/user.service';
 import { ActionType } from '../../../consts/enums/action-type.enum';
-
-export interface Data {
-  userSelected: UserDTO;
-}
+import { Data } from '../../../models/interfaces/data.dto';
 
 @Component({
   selector: 'app-user-form',
@@ -56,7 +53,7 @@ export class UserFormComponent implements OnInit {
   private readonly dialogService = inject(MatDialog);
   private readonly roleService = inject(RoleService);
   private readonly userService = inject(UserService);
-  data = inject<Data>(MAT_DIALOG_DATA);
+  data = inject<Data<UserDTO>>(MAT_DIALOG_DATA);
   form: FormGroup;
   labelPassowrd: string = 'Senha';
   title: string = '';
@@ -85,7 +82,7 @@ export class UserFormComponent implements OnInit {
   }
 
   getRoles() {
-    this.roleService.getAllRoles().subscribe({
+    this.roleService.getAll().subscribe({
       next: (rolesDTO: RoleDTO[]) => {
         this.listRoles = rolesDTO;
       },
@@ -105,8 +102,8 @@ export class UserFormComponent implements OnInit {
   }
 
   addOrEdit() {
-    if (this.data.userSelected) {
-      this.form.patchValue(this.data.userSelected);
+    if (this.data.body) {
+      this.form.patchValue(this.data.body);
       this.title = 'Atualizar usuário';
       this.labelPassowrd = 'Nova senha';
     } else {
@@ -118,14 +115,15 @@ export class UserFormComponent implements OnInit {
 
   save() {
     const userDTO: UserDTO = this.form.getRawValue();
+    let actionType = (!userDTO.uuid)? ActionType.INSERT : ActionType.EDIT; 
     this.userService.emitUserUpdate({
-      actionType: ActionType.INSERT,
+      actionType: actionType,
       body: userDTO
     });
   }
 
   compareFn(role1: RoleDTO, role2: RoleDTO): boolean {
-    return role1 && role2 ? role1.uuid === role2.uuid : role1 === role2;
+    return role1.uuid === role2.uuid;
   }
 
   closedDialog(userDTO?: UserDTO) {
@@ -133,7 +131,7 @@ export class UserFormComponent implements OnInit {
   }
 
   getSelectedRolesLabel(): string {
-    const selected: RoleDTO[] = this.form.get('roles')?.value;
+    const selected: RoleDTO[] = this.form.controls['roles']?.value;
     if (!selected || selected.length === 0) {
       return 'Nenhum papel selecionado';
     }
@@ -142,6 +140,7 @@ export class UserFormComponent implements OnInit {
       // Se tem até 2 itens, mostra todos separados por vírgula
       return selected.map((r) => r.name).join(', ');
     }
+
 
     // Se tem mais que 2, mostra o primeiro e depois "... +X"
     return `${selected[0].name}... +${selected.length - 1}`;

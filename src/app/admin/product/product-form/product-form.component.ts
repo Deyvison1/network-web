@@ -1,5 +1,5 @@
 import { CommonModule, KeyValue } from '@angular/common';
-import { Component, inject, Inject } from '@angular/core';
+import { Component, inject, Inject, OnInit } from '@angular/core';
 import { DragAndDropComponent } from '../../../components/drag-and-drop/drag-and-drop.component';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CategoryDTO } from '../../../models/category.dto';
@@ -24,7 +24,7 @@ import { ActionType } from '../../../consts/enums/action-type.enum';
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.component.scss',
 })
-export class ProductFormComponent {
+export class ProductFormComponent implements OnInit {
   title: string = 'Produto';
   private readonly requiredsCommons = requiredsCommons;
   private readonly categoryService = inject(CategoryService);
@@ -35,6 +35,7 @@ export class ProductFormComponent {
   data = inject<ActionTypeBodyDTO<ProductDTO>>(MAT_DIALOG_DATA);
 
   editOrInsert: string = '';
+
   ngOnInit(): void {
     this.getAllCaregories();
     this.form = FormUtil.buildForm(
@@ -65,7 +66,7 @@ export class ProductFormComponent {
   }
 
   compareFn(c1: any, c2: any): boolean {
-    return c1 && c2 ? c1.id === c2.id : c1 === c2;
+    return c1 && c2 ? c1.uuid === c2.uuid : c1 === c2;
   }
 
   save() {

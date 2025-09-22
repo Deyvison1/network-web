@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { ProductListComponent } from './product-list/product-list.component';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../services/product.service';
-import PageConfig from '../../models/interfaces/page.config';
+import { PageConfig } from '../../models/interfaces/page.config';
 import { ProductDTO } from '../../models/product.dto';
 import { HttpResponse } from '@angular/common/http';
 import { ActionTypeBodyDTO } from '../../models/interfaces/action-type-body.dto';
@@ -14,11 +14,13 @@ import { ActionTypeNotification } from '../../consts/enums/action-type-notificat
 import { MatTableDataSource } from '@angular/material/table';
 import { ActionType } from '../../consts/enums/action-type.enum';
 import { DeleteDialogComponent } from '../../components/delete-dialog/delete-dialog.component';
-import { PageResponseDTO } from '../../models/interfaces/page-response.dto';
+import { ResponseDTOPage } from '../../models/interfaces/page-response.dto';
+import { ProductFilterComponent } from "./product-filter/product-filter.component";
+import { ProductFilterDTO } from '../../models/interfaces/product-filter.dto';
 
 @Component({
   selector: 'app-product',
-  imports: [CommonModule, ProductListComponent],
+  imports: [CommonModule, ProductListComponent, ProductFilterComponent],
   standalone: true,
   templateUrl: './product.component.html',
   styleUrl: './product.component.scss',
@@ -29,20 +31,28 @@ export class ProductComponent {
   private readonly notificationService = inject(NotificationService);
   totalItens: string;
   dataSource: MatTableDataSource<ProductDTO>;
+  pageConfig: PageConfig;
 
-  getAllProducts(pageConfig: PageConfig) {
-    this.service.getAllProductsPage(pageConfig).subscribe({
-      next: (resp: HttpResponse<PageResponseDTO<ProductDTO[]>>) => {
+  getAllProducts(pageConfig: PageConfig, filters?: ProductFilterDTO) {
+    this.pageConfig = pageConfig;
+    this.service.getAllProductsPage(pageConfig, filters).subscribe({
+      next: (resp: HttpResponse<ResponseDTOPage<ProductDTO[]>>) => {
         this.dataSource = new MatTableDataSource(resp.body.content);
         this.totalItens = resp.body.totalElements.toString();
       },
     });
   }
 
+  clear() {
+    this.getAllProducts(this.pageConfig);
+  }
+
+  search(filters: ProductFilterDTO) {
+    this.getAllProducts(this.pageConfig, filters);
+  }
+
   openDialogDeleteProduct(actionTypeBodyDTO: ActionTypeBodyDTO<string>) {
-    const dialogRef = this.dialogService.open(DeleteDialogComponent, {
-      width: '400px',
-    });
+    const dialogRef = this.dialogService.open(DeleteDialogComponent, {});
     dialogRef.afterClosed().subscribe((resp) => {
       if (resp) {
         this.delete(actionTypeBodyDTO.body);

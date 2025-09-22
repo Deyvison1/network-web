@@ -20,13 +20,13 @@
           <input type="text" class="form-control" formControlName="nick" placeholder="Informe o Nick"/>
         </div>
         <div class="col">
-          <mat-label>Papels</mat-label>
+          <mat-label>Papeis</mat-label>
           <mat-select
             [matTooltip]="getSelectedRolesMatTooltip()"
             class="form-control"
             formControlName="roles"
             multiple
-            placeholder="Informe os Papels"
+            placeholder="Informe os Papeis"
           >
             <mat-select-trigger>
               {{ getSelectedRolesLabel() }}

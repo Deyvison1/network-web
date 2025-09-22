@@ -1,1 +1,2 @@
-<p>role works!</p>
+<app-role-filter (searchEvent)="search($event)"></app-role-filter>
+<app-role-list (refreshData)="refreshData($event)" [dataSource]="dataSource" [totalItens]="totalItens"></app-role-list>

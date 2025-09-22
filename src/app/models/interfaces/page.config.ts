@@ -1,4 +1,4 @@
-export default interface PageConfig {
+export interface PageConfig {
   pageIndex: number;
   pageSize: number;
   sortBy: string;

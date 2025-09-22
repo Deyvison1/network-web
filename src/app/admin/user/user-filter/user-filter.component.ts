@@ -8,7 +8,6 @@ import {
 } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ErroComponent } from '../erro/erro.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {
@@ -16,13 +15,13 @@ import {
   MatNativeDateModule,
   MatOptionModule,
 } from '@angular/material/core';
-import { RoleDTO } from '../../models/role.dto';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { UserFilterDTO } from '../../models/interfaces/user-filter.dto';
-import { RoleService } from '../../services/role.service';
 import { MatInputModule } from '@angular/material/input';
-import { NotificationService } from '../../services/notification.service';
-import { ActionTypeNotification } from '../../consts/enums/action-type-notification.enum';
+import { ErroComponent } from '../../../components/erro/erro.component';
+import { RoleService } from '../../../services/role.service';
+import { NotificationService } from '../../../services/notification.service';
+import { RoleDTO } from '../../../models/role.dto';
+import { UserFilterDTO } from '../../../models/interfaces/user-filter.dto';
 
 @Component({
   selector: 'app-user-filter',
@@ -95,7 +94,7 @@ export class UserFilterComponent implements OnInit {
   }
 
   getRoles() {
-    this.roleService.getAllRoles().subscribe({
+    this.roleService.getAll().subscribe({
       next: (rolesDTO: RoleDTO[]) => {
         this.roles = rolesDTO;
       },

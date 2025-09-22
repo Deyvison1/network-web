@@ -12,7 +12,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ActionType } from '../../../consts/enums/action-type.enum';
 import { ProductDTO } from '../../../models/product.dto';
-import PageConfig from '../../../models/interfaces/page.config';
+import { PageConfig } from '../../../models/interfaces/page.config';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { pageCommons } from '../../../consts/page.commons';
 import { ActionTypeBodyDTO } from '../../../models/interfaces/action-type-body.dto';

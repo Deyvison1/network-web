@@ -1,3 +1,4 @@
+<app-category-filter (searchEvent)="search($event)" (clearEvent)="clear()"></app-category-filter>
 <app-category-list [totalItens]="totalItens" [setDataSource]="dataSource" (refreshDataSource)="refreshDataSource($event)"
   (openDialogCategoryEmitter)="openDialogCategory($event)"
 ></app-category-list>

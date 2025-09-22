@@ -33,16 +33,31 @@ export const AuthTokenInterceptor: HttpInterceptorFn = (req, next) => {
           localStorage.removeItem('token');
         } else if (err.status === 403) {
           router.redirectionTo('/forbidden');
-        } else if (err.status === 404 || err.status === 400) {
-          notificationService.notification(err.error.message, ActionTypeNotification.ERRO);
+        } else if (err.status === 404) {
+          notificationService.notification(
+            err.error.message,
+            ActionTypeNotification.WARNING
+          );
+        } else if (err.status === 400) {
+          notificationService.notification(
+            NotificationService.getError(err),
+            ActionTypeNotification.WARNING
+          );
         } else if (err.status === 500) {
           notificationService.notification(
-            'Aconteceu um erro no servidor. Tente novamente ou contate a equipe técnica.', ActionTypeNotification.ERRO
+            'Aconteceu um erro no servidor. Tente novamente ou contate a equipe técnica.',
+            ActionTypeNotification.ERRO
           );
-        } else if(err.status === 409) {
-          notificationService.notification(err.error, ActionTypeNotification.ERRO);
+        } else if (err.status === 409) {
+          notificationService.notification(
+            err.error,
+            ActionTypeNotification.WARNING
+          );
         } else {
-          notificationService.notification('Error desconhecido, contate o administrador do sistema.', ActionTypeNotification.ERRO);
+          notificationService.notification(
+            'Error desconhecido, contate o administrador do sistema.',
+            ActionTypeNotification.ERRO
+          );
         }
       },
     })

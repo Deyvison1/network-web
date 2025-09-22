@@ -6,6 +6,7 @@
       matTooltip="Salvar"
       class="btn btn-primary"
       (click)="openDialog()"
+      [disabled]="!dataSource().data.length"
     >
       <i class="fa-solid fa-plus"></i>
     </button>
@@ -31,7 +32,7 @@
       </ng-container>
 
       <ng-container matColumnDef="roles">
-        <th mat-header-cell *matHeaderCellDef>Papels</th>
+        <th mat-header-cell *matHeaderCellDef>Papeis</th>
         <td mat-cell *matCellDef="let element">
           @for (role of element.roles; track $index) {
           {{ role.name }}
@@ -111,7 +112,7 @@
     <mat-paginator
       #paginator
       (page)="changePage()"
-      [length]="totalItens"
+      [length]="totalItens()"
       [pageSizeOptions]="[5, 10, 25, 100]"
     ></mat-paginator>
   </mat-card-content>

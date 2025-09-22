@@ -1,3 +1,5 @@
+import { pageCommons } from './../../consts/page.commons';
+import { CategorySearchDTO } from './../../models/interfaces/category-search.dto';
 import { ActionTypeBodyDTO } from './../../models/interfaces/action-type-body.dto';
 import { NotificationService } from './../../services/notification.service';
 import { Component, inject } from '@angular/core';
@@ -8,19 +10,20 @@ import { MatDialog } from '@angular/material/dialog';
 import { CategoryFormComponent } from './category-form/category-form.component';
 import { MatCardModule } from '@angular/material/card';
 import { CategoryDTO } from '../../models/category.dto';
-import PageConfig from '../../models/interfaces/page.config';
+import { PageConfig } from '../../models/interfaces/page.config';
 import { HttpResponse } from '@angular/common/http';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActionType } from '../../consts/enums/action-type.enum';
 import { ActionTypeNotification } from '../../consts/enums/action-type-notification.enum';
-import { ICategoryDTO } from '../../models/interfaces/i-category.dto';
 import { CategoryCompletDTO } from '../../models/interfaces/category-complet.dto';
-import { PageResponseDTO } from '../../models/interfaces/page-response.dto';
+import { ResponseDTOPage } from '../../models/interfaces/page-response.dto';
+import { ICategoryDTO } from '../../models/interfaces/i-category.dto';
+import { CategoryFilterComponent } from "./category-filter/category-filter.component";
 
 @Component({
   selector: 'app-category',
   standalone: true,
-  imports: [CommonModule, CategoryListComponent, MatCardModule],
+  imports: [CommonModule, CategoryListComponent, MatCardModule, CategoryFilterComponent],
   templateUrl: './category.component.html',
   styleUrl: './category.component.scss',
 })
@@ -60,10 +63,18 @@ export class CategoryComponent {
     });
   }
 
-  refreshDataSource(pageConfig: PageConfig) {
+  clear() {
+    this.refreshDataSource(this.pageConfig);
+  }
+
+  search(modelSearch: CategorySearchDTO) {
+    this.refreshDataSource(this.pageConfig, modelSearch);
+  }
+
+  refreshDataSource(pageConfig: PageConfig, filters?: CategorySearchDTO) {
     this.pageConfig = pageConfig;
-    this.categoryService.getAllCategoryPage(pageConfig).subscribe({
-      next: (categories: HttpResponse<PageResponseDTO<CategoryDTO[]>>) => {
+    this.categoryService.getAllCategoryPage(pageConfig, filters).subscribe({
+      next: (categories: HttpResponse<ResponseDTOPage<CategoryDTO[]>>) => {
         this.dataSource = new MatTableDataSource(categories.body.content);
         this.totalItens = categories.body.totalElements.toString();
       },

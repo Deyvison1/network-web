@@ -1,3 +1,4 @@
+<app-product-filter (searchEvent)="search($event)" (clearEvent)="clear()"></app-product-filter>
 <app-product-list
   [totalItens]="totalItens"
   (refreshDataSource)="getAllProducts($event)"

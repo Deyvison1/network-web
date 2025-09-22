@@ -14,7 +14,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
-import PageConfig from '../../../models/interfaces/page.config';
+import { PageConfig } from '../../../models/interfaces/page.config';
 import { pageCommons } from '../../../consts/page.commons';
 import { CategoryService } from '../../../services/category.service';
 import { MatTooltipModule } from '@angular/material/tooltip';

@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ActionTypeNotification } from './../consts/enums/action-type-notification.enum';
 import { inject, Injectable } from '@angular/core';
 
-import { ActiveToast, IndividualConfig, ToastrService } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root',
@@ -12,8 +12,7 @@ export class NotificationService {
 
   notification(
     message: string,
-    actionTypeNotification: ActionTypeNotification,
-    title?: string
+    actionTypeNotification: ActionTypeNotification
   ) {
     switch (actionTypeNotification) {
       case ActionTypeNotification.ERRO:
@@ -30,27 +29,35 @@ export class NotificationService {
         break;
       default:
         this.toastr.warning(
-          'Falha ao chamar o notificação. Não foi identificado nenhum parametro sobre o tipo de notificação.'
-        , 'Falha');
+          'Falha ao chamar o notificação. Não foi identificado nenhum parametro sobre o tipo de notificação.',
+          'Falha'
+        );
         break;
     }
   }
 
-  static getError(error: any) {
+  static getError(error: any): string {
     let errorMessage = 'Erro desconhecido';
 
     if (error instanceof HttpErrorResponse) {
-      if (error.error && typeof error.error === 'string') {
-        // Quando o backend retorna um texto simples como mensagem de erro
+      if (typeof error.error === 'string') {
+        // Backend retornou uma string simples
         errorMessage = error.error;
+      } else if (Array.isArray(error.error)) {
+        // Backend retornou uma lista de mensagens (string[])
+        errorMessage = error.error.join('\n');
+      } else if (error.error?.errors && Array.isArray(error.error.errors)) {
+        // Backend retornou objeto com lista de erros (ex: { errors: [...] })
+        errorMessage = error.error.errors.join('\n');
       } else if (error.error?.message) {
-        // Quando o backend retorna um objeto com uma propriedade `message`
+        // Objeto com uma mensagem padrão
         errorMessage = error.error.message;
       } else {
         // Fallback para status + statusText
         errorMessage = `Erro ${error.status}: ${error.statusText}`;
       }
     }
+
     return errorMessage;
   }
 }

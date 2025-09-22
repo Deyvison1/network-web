@@ -1,14 +1,18 @@
 <mat-card class="mt-5 container">
-  <mat-card-content>
-    <div class="d-flex justify-content-between p-3">
-      <h2>Produtos</h2>
-      <button appAuthRole matTooltip="Salvar" class="btn btn-primary" (click)="openDialogProduct(ActionType.INSERT, null)">
-        <i class="fa-solid fa-plus"></i>
-      </button>
-    </div>
+  <div class="d-flex justify-content-between p-3">
+    <h2>Papeis</h2>
+    <button
+      matTooltip="Salvar"
+      class="btn btn-primary"
+      (click)="openDialog()"
+    >
+      <i class="fa-solid fa-plus"></i>
+    </button>
+  </div>
+  <mat-card-content class="mt-4">
     <table
       mat-table
-      [dataSource]="dataSource"
+      [dataSource]="dataSource()"
       matSort
       (matSortChange)="changeSortBy($event)"
       class="mat-elevation-z8"
@@ -18,24 +22,25 @@
           mat-header-cell
           *matHeaderCellDef
           mat-sort-header
-          sortActionDescription="Ordernar pelo nome"
+          sortActionDescription="Ordernar pelo name"
         >
           Nome
         </th>
-        <td mat-cell *matCellDef="let element" [matTooltip]="element.category.name">{{ element.name }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="description">
+         <ng-container matColumnDef="description">
         <th
           mat-header-cell
           *matHeaderCellDef
           mat-sort-header
-          sortActionDescription="Sort by description"
+          sortActionDescription="Ordernar pelo description"
         >
           Descrição
         </th>
         <td mat-cell *matCellDef="let element">{{ element.description }}</td>
       </ng-container>
+
 
       <ng-container matColumnDef="actions">
         <th
@@ -47,18 +52,18 @@
         <td mat-cell *matCellDef="let element">
           <div class="btn-group">
             <button
-              appAuthRole
-              matTooltip="Editar produto"
+              [appAuthRole]="roles"
+              matTooltip="Editar usuario"
               class="btn btn-secondary btn-sm"
-              (click)="openDialogProduct(ActionType.EDIT, element)"
+              (click)="openDialog(element)"
             >
               <i class="fa-regular fa-pen-to-square"></i>
             </button>
             <button
-              appAuthRole
-              matTooltip="Deletar produto"
+              [appAuthRole]="roles"
+              matTooltip="Deletar usuario"
               class="btn btn-danger btn-sm"
-              (click)="openDialogDeleteProduct(element.uuid)"
+              (click)="openDialogDeleteUser(element.uuid)"
             >
               <i class="fa-regular fa-trash-can"></i>
             </button>
@@ -68,6 +73,7 @@
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <!-- 🔽 Adicione esta linha -->
       <tr class="mat-row" *matNoDataRow>
         <td
           class="mat-cell text-center p-4"
@@ -77,15 +83,11 @@
         </td>
       </tr>
     </table>
-
-    <div>
-      <mat-paginator
-        #paginacao
-        [length]="totalItens()"
-        [pageSizeOptions]="[5, 10, 20, 50]"
-        (page)="changePage()"
-      >
-      </mat-paginator>
-    </div>
+    <mat-paginator
+      #paginator
+      (page)="changePage()"
+      [length]="totalItens()"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+    ></mat-paginator>
   </mat-card-content>
 </mat-card>
