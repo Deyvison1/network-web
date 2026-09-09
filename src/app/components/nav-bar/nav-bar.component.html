@@ -1,43 +1,47 @@
 <mat-menu #menu="matMenu">
   @for (item of itensMenu; track item) {
-  <button mat-menu-item (click)="item.function()">
-    <mat-icon>{{ item.icon }}</mat-icon>
-    <span>{{ item.label }}</span>
-  </button>
+    <button mat-menu-item (click)="item.function()">
+      <mat-icon>{{ item.icon }}</mat-icon>
+      <span>{{ item.label }}</span>
+    </button>
   }
 </mat-menu>
 
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #drawer mode="over" class="sidenav">
     @if (isLoggedIn) {
-    <h5 class="p-2 text-center mt-2">{{ nameApplication | titlecase }}</h5>
-    <mat-nav-list>
-      @for (item of itensMenuSideBar; track item) { @if (!isSubmenuItem(item)) {
-      <button mat-menu-item (click)="item.function()">
-        <mat-icon [matTooltip]="item.tooltip">{{ item.icon }}</mat-icon>
-        <span>{{ item.label }}</span>
-      </button>
-      } @else {
-      <!-- Item com submenu -->
-      <button mat-menu-item (click)="toggleSubmenu(item.label)">
-        <mat-icon [matTooltip]="item.tooltip">{{ item.icon }}</mat-icon>
-        <span>{{ item.label }}</span>
-        <mat-icon class="">
-          {{ isSubmenuOpen(item.label) ? "expand_less" : "expand_more" }}
-        </mat-icon>
-      </button>
+      <h5 class="p-2 text-center mt-2">{{ nameApplication | titlecase }}</h5>
+      <mat-nav-list>
+        @for (item of itensMenuSideBar; track item) {
+          @if (!isSubmenuItem(item)) {
+            <button mat-menu-item (click)="item.function()">
+              <mat-icon [matTooltip]="item.tooltip">{{ item.icon }}</mat-icon>
+              <span>{{ item.label }}</span>
+            </button>
+          } @else {
+            <button mat-menu-item (click)="toggleSubmenu(item.label)">
+              <mat-icon [matTooltip]="item.tooltip">{{ item.icon }}</mat-icon>
+              <span>{{ item.label }}</span>
+              <mat-icon class="">
+                {{ isSubmenuOpen(item.label) ? "expand_less" : "expand_more" }}
+              </mat-icon>
+            </button>
 
-      @if (isSubmenuOpen(item.label)) {
-      <div class="submenu">
-        @for (sub of item.children; track sub) {
-        <button mat-menu-item (click)="sub.function()">
-          <mat-icon [matTooltip]="sub.tooltip">{{ sub.icon }}</mat-icon>
-          <span>{{ sub.label }}</span>
-        </button>
+            @if (isSubmenuOpen(item.label)) {
+              <div class="submenu">
+                @for (sub of item.children; track sub) {
+                  <button mat-menu-item (click)="sub.function()">
+                    <mat-icon [matTooltip]="sub.tooltip">{{
+                      sub.icon
+                    }}</mat-icon>
+                    <span>{{ sub.label }}</span>
+                  </button>
+                }
+              </div>
+            }
+          }
         }
-      </div>
-      } } }
-    </mat-nav-list>
+      </mat-nav-list>
     }
   </mat-sidenav>
   <mat-sidenav-content>
@@ -46,31 +50,48 @@
       <nav class="navbar navbar-light bg-light justify-content-between">
         <div>
           @if (isLoggedIn) {
-          <mat-toolbar color="primary">
-            <button mat-icon-button (click)="drawer.toggle()">
-              <mat-icon>menu</mat-icon>
-            </button>
-            <h5 class="p-2">{{ nameApplication | titlecase }}</h5>
-          </mat-toolbar>
+            <mat-toolbar color="primary">
+              <button mat-icon-button (click)="drawer.toggle()">
+                <mat-icon>menu</mat-icon>
+              </button>
+              <h5 class="p-2">{{ nameApplication | titlecase }}</h5>
+            </mat-toolbar>
           }
         </div>
         <div class="container">
           <div>
             @if (!isLoggedIn) {
-            <h4 class="font-weight-bold">{{ nameApplication | uppercase }}</h4>
+              <h4 class="font-weight-bold">
+                {{ nameApplication | uppercase }}
+              </h4>
             }
           </div>
           <div>
             @if (!isLoggedIn) {
-            <button mat-flat-button (click)="openDialog()">
-              <mat-icon>login</mat-icon>
-              <span>Login</span>
-            </button>
+              <button mat-flat-button (click)="login()">
+                <mat-icon>login</mat-icon>
+                <span>Login</span>
+              </button>
             } @else {
-            <button mat-flat-button [matMenuTriggerFor]="menu">
-              <mat-icon>emoji_people</mat-icon>
-              {{ userName | titlecase }}
-            </button>
+              <div class="navbar-actions">
+                <button
+                  mat-stroked-button
+                  class="admin-button"
+                  matTooltip="Área administrativa" style="margin-right: 10px;" (click)="redirectionToUrl('product')"
+                >
+                  <mat-icon>admin_panel_settings</mat-icon>
+                  <span>Área Admin</span>
+                </button>
+
+                <button
+                  mat-flat-button
+                  class="profile-button"
+                  [matMenuTriggerFor]="menu"
+                >
+                  <mat-icon>emoji_people</mat-icon>
+                  {{ userName | titlecase }}
+                </button>
+              </div>
             }
           </div>
         </div>

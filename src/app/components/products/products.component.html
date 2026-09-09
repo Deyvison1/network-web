@@ -1,36 +1,107 @@
 @if (products.length) {
-<mat-card
-  class="container p-4 bg-white rounded"
->
-  <div class="d-flex justify-content-around">
-    @for (product of products; track product.uuid) {
-    <mat-card class="mat-card-color p-3">
-      <span
-        ><strong>{{ product.category?.name }}</strong> </span
-      ><br />
-      <div>
-        <span> Download: {{ product.speedDownload + " MB" }} <br /> </span>
-        <span> Upload: {{ product.speedUpload + " MB" }} <br /> </span>
-        @if (product.valueWifi) {
-        <span>Wifi: {{ product.valueWifi | currency : "BRL" }} <br /></span>
-        } @if (!product.valueWifi) {
-        <span>Wifi Grátis <br></span>
-        } @if (product.taxaAdesao) {
-        <span>Adesão: {{ product.taxaAdesao | currency : "BRL" }} <br /></span>
-        } @if (!product.taxaAdesao) {
-        <span>Sem Taxa de Adesão</span> <br />
+  <section class="plans-section">
+    <div class="container">
+      <div class="plans-header">
+        <span class="plans-label">PLANOS DE INTERNET</span>
+
+        <h2>Escolha o plano ideal para você</h2>
+
+        <p>Internet 100% fibra óptica, rápida e estável para sua casa.</p>
+      </div>
+
+      <div class="plans-list">
+        @for (product of products; track product.id) {
+          <mat-card class="plan-card">
+            <div class="plan-card-header">
+              <span class="category-badge">
+                {{ product.category?.name }}
+              </span>
+
+              <h3>
+                {{ product.name }}
+              </h3>
+            </div>
+
+            <div class="speed-highlight">
+              <div class="speed">
+                <span class="speed-icon">
+                  <em class="fa-solid fa-download"></em>
+                </span>
+
+                <div>
+                  <small>Download</small>
+                  <strong> {{ product.speedDownload }} <span>MB</span> </strong>
+                </div>
+              </div>
+
+              <div class="speed">
+                <span class="speed-icon">
+                  <em class="fa-solid fa-upload"></em>
+                </span>
+
+                <div>
+                  <small>Upload</small>
+                  <strong> {{ product.speedUpload }} <span>MB</span> </strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="plan-features">
+              <div class="feature">
+                <span>
+                  <em class="fa-solid fa-wifi"></em>
+                  Wi-Fi
+                </span>
+
+                @if (product.valueWifi) {
+                  <strong>
+                    {{ product.valueWifi | currency: "BRL" }}
+                  </strong>
+                } @else {
+                  <strong class="positive"> Grátis </strong>
+                }
+              </div>
+
+              <div class="feature">
+                <span>
+                  <em class="fa-solid fa-bolt"></em>
+                  Taxa de adesão
+                </span>
+
+                @if (product.taxaAdesao) {
+                  <strong>
+                    {{ product.taxaAdesao | currency: "BRL" }}
+                  </strong>
+                } @else {
+                  <strong class="positive"> Grátis </strong>
+                }
+              </div>
+            </div>
+
+            <div class="plan-price">
+              <span>por apenas</span>
+
+              <div>
+                <strong>
+                  {{ product.value | currency: "BRL" }}
+                </strong>
+
+                <small>/mês</small>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="contract-button"
+              (click)="openModalViewQrCode()"
+            >
+              <span>Contrate agora</span>
+
+              <em class="fa-brands fa-whatsapp"></em>
+            </button>
+          </mat-card>
         }
-        <span> Valor: {{ product.value | currency : "BRL" }} </span>
-        <br />
-        <br />
       </div>
-      <div >
-        <button class="btn btn-success" (click)="openModalViewQrCode()">
-          Contrate Agora &nbsp;<em class="fa-brands fa-whatsapp"></em>
-        </button>
-      </div>
-    </mat-card>
-    }
-  </div>
-</mat-card>
+    </div>
+  </section>
 }

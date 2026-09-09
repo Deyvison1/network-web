@@ -1,52 +1,64 @@
-<footer class="bg-light text-center text-white">
-  <!-- Section: Social media -->
-  <section class="mt-5 p-4">
-    <!-- Facebook -->
-    <a
-      class="btn btn-primary btn-floating m-1"
-      style="background-color: #3b5998"
-      href="#!"
-      role="button"
-      ><em class="fab fa-facebook-f"></em
-    ></a>
-    <!-- Google -->
-    <a
-      class="btn btn-primary btn-floating m-1"
-      style="background-color: #dd4b39"
-      href="#!"
-      role="button"
-      ><em class="fab fa-google"></em
-    ></a>
-    <!-- Instagram -->
-    <a
-      class="btn btn-primary btn-floating m-1"
-      style="background-color: #ac2bac"
-      href="#!"
-      role="button"
-      ><em class="fab fa-instagram"></em
-    ></a>
-    <!-- Linkedin -->
-    <a
-      class="btn btn-primary btn-floating m-1"
-      style="background-color: #0082ca"
-      href="#!"
-      role="button"
-      ><em class="fab fa-linkedin-in"></em
-    ></a>
-  </section>
-  <!-- Section: Social media -->
-  <!-- Grid container -->
+<footer class="site-footer">
+  <section class="footer-content">
+    <div class="container">
+      <div class="footer-brand">
+        <span class="footer-label"> SUPREME NETWORK </span>
 
-  <!-- Copyright -->
-  <div
-    class="text-center p-3"
-    style="background-color: rgba(0, 0, 0, 0.2); color: black"
-  >
-    © 2022 SupremeNetwork:
-    <a href="#">www.supreme-network-telecom.br</a>
-    <br />
-    {{ "61992728080" | phonePipe }} Ligação ou Whatsapp
-    <br />
-    {{ "supremenetwork00@gmail.com" }}
+        <h2>Conectando você ao que importa.</h2>
+
+        <p>
+          Internet 100% fibra óptica, com velocidade, estabilidade e qualidade
+          para sua casa.
+        </p>
+      </div>
+
+      <div class="footer-social">
+        <a class="social-button facebook" href="#!" aria-label="Facebook">
+          <em class="fab fa-facebook-f"></em>
+        </a>
+
+        <a class="social-button instagram" href="#!" aria-label="Instagram">
+          <em class="fab fa-instagram"></em>
+        </a>
+
+        <a class="social-button google" href="#!" aria-label="Google">
+          <em class="fab fa-google"></em>
+        </a>
+
+        <a class="social-button linkedin" href="#!" aria-label="LinkedIn">
+          <em class="fab fa-linkedin-in"></em>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="footer-contact">
+        <span>
+          <em class="fa-solid fa-phone"></em>
+
+          {{ "61992728080" | phonePipe }}
+        </span>
+
+        <span>
+          <em class="fa-brands fa-whatsapp"></em>
+
+          Ligação ou WhatsApp
+        </span>
+
+        <span>
+          <em class="fa-solid fa-envelope"></em>
+
+          {{ "supremenetwork00@gmail.com" }}
+        </span>
+      </div>
+
+      <div class="footer-copyright">
+        © 2022 SupremeNetwork. Todos os direitos reservados.
+      </div>
+
+      <div class="footer-site">www.supreme-network-telecom.br</div>
+    </div>
   </div>
 </footer>

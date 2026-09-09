@@ -7,5 +7,5 @@ export interface ProductFilterDTO {
     taxaAdesao: number;
     speedDownload: number;
     speedUpload: number;
-    created: Date
+    creationDate: Date
 }

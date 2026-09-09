@@ -1,0 +1,117 @@
+:host {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ==============================
+   CONTEÚDO
+================================ */
+
+.p-3 {
+  padding: 28px !important;
+  background: #ffffff;
+}
+
+/* ==============================
+   TÍTULO
+================================ */
+
+h4 {
+  position: relative;
+  margin: 0 0 28px;
+  color: #172033;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.4;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 34px;
+    height: 3px;
+    margin: 9px auto 0;
+    border-radius: 10px;
+    background: #0d6efd;
+  }
+}
+
+/* ==============================
+   BOTÕES
+================================ */
+
+.p-3 > .d-flex {
+  justify-content: center !important;
+  gap: 12px;
+}
+
+.p-3 > .d-flex > button {
+  min-width: 100px;
+  height: 40px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+/* ==============================
+   SIM
+================================ */
+
+.p-3 > .d-flex > .btn-success {
+  background: #198754;
+  color: #ffffff;
+  box-shadow: 0 5px 14px rgba(25, 135, 84, 0.18);
+
+  &:hover {
+    background: #157347;
+    box-shadow: 0 8px 18px rgba(25, 135, 84, 0.25);
+  }
+}
+
+/* ==============================
+   NÃO
+================================ */
+
+.p-3 > .d-flex > .btn-danger {
+  background: #dc3545;
+  color: #ffffff;
+  box-shadow: 0 5px 14px rgba(220, 53, 69, 0.18);
+
+  &:hover {
+    background: #bb2d3b;
+    box-shadow: 0 8px 18px rgba(220, 53, 69, 0.25);
+  }
+}
+
+/* ==============================
+   RESPONSIVO
+================================ */
+
+@media (max-width: 480px) {
+  .p-3 {
+    padding: 22px !important;
+  }
+
+  h4 {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+
+  .p-3 > .d-flex > button {
+    min-width: 90px;
+  }
+}

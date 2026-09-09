@@ -1,0 +1,198 @@
+.site-footer {
+  margin-top: 0;
+
+  background: #111827;
+
+  color: #ffffff;
+}
+
+.footer-content {
+  padding: 65px 0 50px;
+
+  background: linear-gradient(135deg, #111827 0%, #172033 100%);
+}
+
+.footer-brand {
+  max-width: 650px;
+
+  margin: 0 auto;
+
+  text-align: center;
+
+  .footer-label {
+    display: inline-block;
+
+    margin-bottom: 10px;
+
+    color: #4d9cff;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 1.8px;
+  }
+
+  h2 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 28px;
+    font-weight: 800;
+  }
+
+  p {
+    max-width: 550px;
+
+    margin: 12px auto 0;
+
+    color: #9ca8ba;
+
+    font-size: 14px;
+    line-height: 1.7;
+  }
+}
+
+.footer-social {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 12px;
+
+  margin-top: 30px;
+}
+
+.social-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid #303b4f;
+  border-radius: 12px;
+
+  background: #1b2535;
+
+  color: #aeb8c8;
+
+  text-decoration: none;
+
+  font-size: 15px;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+
+    color: #ffffff;
+
+    border-color: transparent;
+  }
+
+  &.facebook:hover {
+    background: #3b5998;
+  }
+
+  &.instagram:hover {
+    background: #ac2bac;
+  }
+
+  &.google:hover {
+    background: #dd4b39;
+  }
+
+  &.linkedin:hover {
+    background: #0082ca;
+  }
+}
+
+.footer-bottom {
+  padding: 25px 0;
+
+  border-top: 1px solid #293346;
+
+  background: #0d1420;
+
+  text-align: center;
+}
+
+.footer-contact {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-wrap: wrap;
+
+  gap: 25px;
+
+  margin-bottom: 20px;
+
+  span {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #aeb8c8;
+
+    font-size: 13px;
+
+    em {
+      color: #4d9cff;
+
+      font-size: 13px;
+    }
+  }
+}
+
+.footer-copyright {
+  color: #697586;
+
+  font-size: 12px;
+}
+
+.footer-site {
+  margin-top: 5px;
+
+  color: #4d9cff;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    padding: 50px 20px 40px;
+  }
+
+  .footer-brand {
+    h2 {
+      font-size: 23px;
+    }
+
+    p {
+      font-size: 13px;
+    }
+  }
+
+  .footer-bottom {
+    padding: 25px 15px;
+  }
+
+  .footer-contact {
+    flex-direction: column;
+
+    gap: 12px;
+
+    margin-bottom: 18px;
+  }
+}

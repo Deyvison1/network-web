@@ -1,7 +1,5 @@
-export class CategoryDTO {
-  constructor(
-    public uuid?: string,
-    public name?: string,
-    public description?: string
-  ) {}
+export interface CategoryDTO {
+  id: string;
+  name: string;
+  description: string;
 }

@@ -110,17 +110,17 @@
       <select
         [ngClass]="{
           'is-invalid':
-            form.get('category').errors && form.get('category').touched
+            form.get('categoryId').errors && form.get('categoryId').touched
         }"
         class="form-control"
-        formControlName="category"
+        formControlName="categoryId"
         [compareWith]="compareFn"
       >
-        <option *ngFor="let category of categories" [ngValue]="category">
-          {{ category.name }}
+        <option *ngFor="let category of categories" [ngValue]="category" [value]="category.key">
+          {{ category.value }}
         </option>
       </select>
-      <app-erro [setControl]="form.get('category')"></app-erro>
+      <app-erro [setControl]="form.get('categoryId')"></app-erro>
     </div>
   </div>
 

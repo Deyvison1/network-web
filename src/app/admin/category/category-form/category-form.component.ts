@@ -10,9 +10,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActionTypeBodyDTO } from '../../../models/interfaces/action-type-body.dto';
 import { ActionType } from '../../../consts/enums/action-type.enum';
 import { MatCardModule } from '@angular/material/card';
-import { ICategoryDTO } from '../../../models/interfaces/i-category.dto';
+import { ICategoryDTO } from '../../../models/interfaces/icategory.dto';
 import { CategoryService } from '../../../services/category.service';
 import { CategoryCompletDTO } from '../../../models/interfaces/category-complet.dto';
+import { ApiResponseDTO } from '../../../models/interfaces/api-response.dto';
 
 @Component({
   selector: 'app-category-form',
@@ -22,7 +23,7 @@ import { CategoryCompletDTO } from '../../../models/interfaces/category-complet.
     ReactiveFormsModule,
     DragAndDropComponent,
     ErroComponent,
-    MatCardModule
+    MatCardModule,
   ],
   templateUrl: './category-form.component.html',
   styleUrl: './category-form.component.scss',
@@ -31,6 +32,7 @@ export class CategoryFormComponent implements OnInit {
   private readonly requiredsCommons = requiredsCommons;
   private readonly categoryService = inject(CategoryService);
   private readonly dialogRef = inject(MatDialogRef<CategoryFormComponent>);
+  private readonly fields: string[] = ['id', 'name', 'description'];
   data = inject<ActionTypeBodyDTO<string>>(MAT_DIALOG_DATA);
   categoryCompletSelected: CategoryCompletDTO;
 
@@ -44,7 +46,7 @@ export class CategoryFormComponent implements OnInit {
   }
 
   setTitle() {
-    this.title = (this.data.body)? 'Atualizar Categoria' : 'Adicionar Categoria';
+    this.title = this.data.body ? 'Atualizar Categoria' : 'Adicionar Categoria';
   }
 
   close(categoryDTO?: ICategoryDTO) {
@@ -53,18 +55,16 @@ export class CategoryFormComponent implements OnInit {
 
   initForm() {
     this.form = FormUtil.buildForm(
-      Object.keys(new CategoryDTO()),
-      this.requiredsCommons.requiredsCategory
+      this.fields,
+      this.requiredsCommons.requiredsCategory,
     );
     if (this.data.actionType === ActionType.EDIT && this.data.body) {
-      this.categoryService.findByIdComplet(this.data.body).subscribe(
-        {
-          next: (categoryCompletDTO: CategoryCompletDTO) => {
-            this.categoryCompletSelected = categoryCompletDTO;
-            this.form.patchValue(this.categoryCompletSelected);
-          }
-        }
-      );
+      this.categoryService.findByIdComplet(this.data.body).subscribe({
+        next: (categoryCompletDTO: ApiResponseDTO<CategoryCompletDTO>) => {
+          this.categoryCompletSelected = categoryCompletDTO.data;
+          this.form.patchValue(this.categoryCompletSelected);
+        },
+      });
     }
   }
 

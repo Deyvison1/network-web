@@ -4,3 +4,9 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-drawer-content {
+  height: auto !important;
+  min-height: 100vh;
+  overflow-y: visible !important;
+}

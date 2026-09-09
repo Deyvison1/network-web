@@ -3,17 +3,17 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { LoginComponent } from '../../admin/login/login.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
-import { AuthService } from '../../services/auth.service';
-import InformationsTokenDTO from '../../models/interfaces/informations-token.dto';
-import { RouterService } from '../../services/router.service';
 import { MatCardModule } from '@angular/material/card';
 import { RouterOutlet } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { RouterService } from '../../services/router.service';
+import { KeycloakService } from '../../services/keycloak.service';
+import { environment } from '../../../environments/environment';
+
 interface SimpleMenuItem {
   icon: string;
   label: string;
@@ -27,12 +27,12 @@ interface SubMenuItem extends SimpleMenuItem {
 }
 
 type MenuItem = SimpleMenuItem | SubMenuItem;
+
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
   imports: [
     CommonModule,
-    MatDialogModule,
     MatIconModule,
     MatMenuModule,
     MatButtonModule,
@@ -47,17 +47,20 @@ type MenuItem = SimpleMenuItem | SubMenuItem;
   styleUrl: './nav-bar.component.scss',
 })
 export class NavBarComponent implements OnInit {
-  private readonly dialogService = inject(MatDialog);
-  private readonly authService = inject(AuthService);
+  private readonly keycloakService = inject(KeycloakService);
   private readonly router = inject(RouterService);
-  private readonly roles: string[] = ['ADMIN', 'USER'];
+  private readonly env = environment;
+
   nameApplication = 'Supreme Network Web';
-  isLoggedIn: boolean;
-  userName: string;
+
+  isLoggedIn = false;
+  userName = '';
+
   itensMenu: MenuItem[] = [];
   itensMenuSideBar: MenuItem[] = [];
 
   openedSubmenus: { [key: string]: boolean } = {};
+
   isSmallScreen = signal(false);
 
   ngOnInit(): void {
@@ -66,7 +69,7 @@ export class NavBarComponent implements OnInit {
     this.initItensMenuSideBar();
   }
 
-  initItensMenu() {
+  initItensMenu(): void {
     this.itensMenu = [
       {
         icon: 'account_circle',
@@ -89,11 +92,11 @@ export class NavBarComponent implements OnInit {
     return 'children' in item && Array.isArray(item.children);
   }
 
-  redirectionToUrl(url: string) {
+  redirectionToUrl(url: string): void {
     this.router.redirectionTo(url);
   }
 
-  toggleSubmenu(menu: string) {
+  toggleSubmenu(menu: string): void {
     this.openedSubmenus[menu] = !this.openedSubmenus[menu];
   }
 
@@ -101,7 +104,7 @@ export class NavBarComponent implements OnInit {
     return this.openedSubmenus[menu];
   }
 
-  initItensMenuSideBar() {
+  initItensMenuSideBar(): void {
     this.itensMenuSideBar = [
       {
         icon: 'add_shopping_cart',
@@ -119,68 +122,40 @@ export class NavBarComponent implements OnInit {
           this.redirectionToUrl('/category');
         },
       },
-      {
-        icon: 'group',
-        label: 'Usuários',
-        tooltip: 'Controle dos Usuários',
-        function: () => {
-          this.redirectionToUrl('/user');
-        },
-        isSubmenu: true,
-        children: [
-          {
-            label: 'Usuários',
-            icon: 'group',
-            tooltip: 'Gerenciar usuarios',
-            function: () => this.redirectionToUrl('/user'),
-          },
-          {
-            label: 'Papeis',
-            icon: 'list',
-            tooltip: 'Visualizar usuários',
-            function: () => this.redirectionToUrl('/role'),
-          },
-        ],
-      },
     ];
   }
 
-  verificationLoggedIn() {
+  verificationLoggedIn(): void {
     this.getIsLoggedIn();
+
     if (this.isLoggedIn) {
       this.getInformationToken();
     }
   }
 
-  openDialog() {
-    const dialog = this.dialogService.open(LoginComponent, {
-      width: '400px',
-    });
-
-    dialog.afterClosed().subscribe((resp) => {
-      this.verificationLoggedIn();
-    });
+  redirectionToProfile(): void {
+    globalThis.location.href = this.env.keycloakConfig.urlAccount;
   }
 
-  redirectionToProfile() {
-    this.router.redirectionTo('/profile');
+  getInformationToken(): void {
+    const profile = this.keycloakService.getUserProfile();
+
+    this.userName = profile?.username ?? '';
   }
 
-  getInformationToken() {
-    const token: InformationsTokenDTO = this.authService.decodePayloadJWT();
-    this.userName = token.sub;
+  getInformationCompletToken() {
+    return this.keycloakService.getDecodedToken();
   }
 
-  getInformationCompletToken(): InformationsTokenDTO {
-    return this.authService.decodePayloadJWT();
+  getIsLoggedIn(): void {
+    this.isLoggedIn = this.keycloakService.isLoggedIn();
   }
 
-  getIsLoggedIn() {
-    this.isLoggedIn = this.authService.isLoggedIn();
+  login(): void {
+    this.keycloakService.login();
   }
 
-  logout() {
-    this.authService.logout();
-    this.verificationLoggedIn();
+  logout(): void {
+    this.keycloakService.logout();
   }
 }

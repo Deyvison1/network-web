@@ -1,0 +1,371 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+mat-card.container {
+  width: calc(100% - 40px);
+  max-width: 1400px;
+  margin: 40px auto 0 !important;
+
+  padding: 0;
+
+  box-sizing: border-box;
+
+  border: 1px solid #e7ebf1;
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow: 0 8px 30px rgba(30, 41, 59, 0.06);
+
+  overflow: hidden;
+}
+
+mat-card-content {
+  padding: 0 !important;
+}
+
+/* ==============================
+   CABEÇALHO
+================================ */
+
+.d-flex.justify-content-between {
+  align-items: center;
+
+  padding: 24px 28px !important;
+
+  border-bottom: 1px solid #edf0f4;
+
+  background: #ffffff;
+}
+
+h2 {
+  position: relative;
+
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 25px;
+  font-weight: 800;
+  line-height: 1.2;
+
+  &::after {
+    content: "";
+
+    display: block;
+
+    width: 34px;
+    height: 3px;
+
+    margin-top: 7px;
+
+    border-radius: 10px;
+
+    background: #0d6efd;
+  }
+}
+
+/* ==============================
+   BOTÃO ADICIONAR
+================================ */
+
+.d-flex > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 10px;
+
+  background: #0d6efd;
+  color: #ffffff;
+
+  font-size: 15px;
+
+  box-shadow: 0 5px 14px rgba(13, 110, 253, 0.18);
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    background: #0b5ed7;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 8px 18px rgba(13, 110, 253, 0.25);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+/* ==============================
+   TABELA
+================================ */
+
+table {
+  width: 100%;
+
+  border-collapse: separate;
+  border-spacing: 0;
+
+  background: #ffffff;
+}
+
+/* Cabeçalho */
+
+.mat-mdc-header-row {
+  height: 50px;
+
+  background: #f8fafc;
+}
+
+.mat-mdc-header-cell {
+  padding: 0 22px;
+
+  border-bottom: 1px solid #e8ecf2;
+
+  color: #697386;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+/* ==============================
+   LINHAS
+================================ */
+
+.mat-mdc-row {
+  min-height: 68px;
+
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: #f8fbff;
+  }
+}
+
+.mat-mdc-cell {
+  padding: 12px 22px;
+
+  border-bottom: 1px solid #f0f2f5;
+
+  color: #303a4b;
+
+  font-size: 14px;
+
+  &:first-child {
+    color: #172033;
+    font-weight: 700;
+  }
+}
+
+.mat-mdc-row:last-child {
+  .mat-mdc-cell {
+    border-bottom: 0;
+  }
+}
+
+/* ==============================
+   NOME
+================================ */
+
+.mat-mdc-cell:first-child {
+  position: relative;
+
+  &::before {
+    content: "";
+
+    display: inline-block;
+
+    width: 7px;
+    height: 7px;
+
+    margin-right: 10px;
+
+    border-radius: 50%;
+
+    background: #0d6efd;
+
+    vertical-align: middle;
+  }
+}
+
+/* ==============================
+   DESCRIÇÃO
+================================ */
+
+.mat-mdc-cell:nth-child(2) {
+  color: #687386;
+
+  font-size: 13px;
+}
+
+/* ==============================
+   AÇÕES
+================================ */
+
+.mat-column-actions {
+  width: 130px;
+
+  text-align: center;
+}
+
+.mat-column-actions.mat-mdc-header-cell {
+  color: #697386;
+}
+
+.mat-column-actions.mat-mdc-cell {
+  text-align: center;
+}
+
+.btn-group {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 7px;
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    font-size: 13px;
+
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  /* Editar */
+
+  .btn-secondary {
+    background: #eef4ff;
+    color: #0d6efd;
+
+    &:hover {
+      background: #0d6efd;
+      color: #ffffff;
+
+      box-shadow: 0 5px 12px rgba(13, 110, 253, 0.18);
+    }
+  }
+
+  /* Deletar */
+
+  .btn-danger {
+    background: #fff0f1;
+    color: #dc3545;
+
+    &:hover {
+      background: #dc3545;
+      color: #ffffff;
+
+      box-shadow: 0 5px 12px rgba(220, 53, 69, 0.18);
+    }
+  }
+}
+
+/* ==============================
+   NENHUM REGISTRO
+================================ */
+
+.mat-row:has(.text-center) {
+  height: 150px;
+
+  .mat-cell {
+    color: #8a94a6;
+
+    font-size: 13px;
+
+    text-align: center;
+  }
+}
+
+/* ==============================
+   PAGINADOR
+================================ */
+
+mat-paginator {
+  border-top: 1px solid #edf0f4;
+
+  background: #ffffff;
+
+  ::ng-deep {
+    .mat-mdc-paginator-container {
+      min-height: 58px;
+
+      padding: 0 18px;
+    }
+
+    .mat-mdc-paginator-page-size-label,
+    .mat-mdc-paginator-range-label {
+      color: #7a8495;
+
+      font-size: 12px;
+    }
+  }
+}
+
+/* ==============================
+   RESPONSIVO
+================================ */
+
+@media (max-width: 768px) {
+  mat-card.container {
+    width: calc(100% - 24px);
+
+    margin-top: 24px !important;
+
+    border-radius: 14px;
+  }
+
+  .d-flex.justify-content-between {
+    padding: 20px !important;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  .mat-mdc-header-cell,
+  .mat-mdc-cell {
+    padding: 10px 14px;
+  }
+
+  table {
+    min-width: 600px;
+  }
+}

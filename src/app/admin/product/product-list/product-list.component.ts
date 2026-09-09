@@ -68,7 +68,7 @@ export class ProductListComponent implements OnInit {
 
   setSortBy(sort: Sort) {
     this.sort = sort;
-    return !sort.direction ? 'created' : sort.active + ',' + sort.direction;
+    return !sort.direction ? 'creationDate' : sort.active + ',' + sort.direction;
   }
 
   changeSortBy(sort: Sort) {
@@ -84,10 +84,10 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-  openDialogDeleteProduct(uuid: string) {
+  openDialogDeleteProduct(id: string) {
     this.openDialogDeleteProductEmitter.emit({
       actionType: ActionType.DELETE,
-      body: uuid,
+      body: id,
     });
   }
 }

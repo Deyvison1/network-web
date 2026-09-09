@@ -1,31 +1,21 @@
-import {
-  Directive,
-  ElementRef,
-  inject,
-  input,
-  OnInit,
-} from '@angular/core';
-import { AuthService } from '../services/auth.service';
-import InformationsTokenDTO from '../models/interfaces/informations-token.dto';
+import { Directive, ElementRef, OnInit, inject, input } from '@angular/core';
+
+import { KeycloakService } from '../services/keycloak.service';
 
 @Directive({
   selector: '[appAuthRole]',
 })
 export class AuthRoleDirective implements OnInit {
   private readonly el = inject(ElementRef);
-  private readonly authService = inject(AuthService);
+  private readonly keycloakService = inject(KeycloakService);
+
   readonly appAuthRole = input<string[]>();
 
-  private getUserRole(): InformationsTokenDTO {
-    return this.authService.decodePayloadJWT();
-  }
-
   ngOnInit(): void {
-    const role: InformationsTokenDTO = this.getUserRole();
+    const userRoles = this.keycloakService.getRoles();
     const allowedRoles = this.appAuthRole();
 
-    if (!allowedRoles?.some((r) => role.roles.includes(r))) {
-      this.el.nativeElement.style.display = 'none';
+    if (!allowedRoles?.some((role) => userRoles.includes(role))) {
       this.el.nativeElement.remove();
     }
   }

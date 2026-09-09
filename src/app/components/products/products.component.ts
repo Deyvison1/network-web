@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
-import { ProductDTO } from '../../models/product.dto';
+import { ProductCategoryCompletDTO, ProductDTO } from '../../models/product.dto';
 import { MatDialog } from '@angular/material/dialog';
 import { ViewQrCodeComponent } from '../view-qr-code/view-qr-code.component';
 import { MatCardModule } from '@angular/material/card';
@@ -14,9 +14,8 @@ import { MatCardModule } from '@angular/material/card';
 })
 export class ProductsComponent {
   private readonly dialogService = inject(MatDialog);
-  @Input() products: ProductDTO[] = [];
+  @Input() products: ProductCategoryCompletDTO[] = [];
   
-
   constructor() {
   }
   openModalViewQrCode() {

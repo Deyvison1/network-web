@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import Keycloak from 'keycloak-js';
 import { environment } from '../../environments/environment';
-import { KeycloakDecodedToken } from '../models/interfaces/keycloak-decoded-token.dto';
 
 @Injectable({ providedIn: 'root' })
 export class KeycloakService {
@@ -42,7 +41,7 @@ export class KeycloakService {
       return null;
     }
 
-    const tokenParsed = this.keycloak.tokenParsed as KeycloakDecodedToken;
+    const tokenParsed = this.keycloak.tokenParsed;
 
     return {
       username: tokenParsed['preferred_username'] ?? '',
@@ -56,8 +55,8 @@ export class KeycloakService {
     return this.keycloak;
   }
 
-  getDecodedToken(): KeycloakDecodedToken | undefined {
-    return this.keycloak?.tokenParsed as KeycloakDecodedToken;
+  getDecodedToken() {
+    return this.keycloak?.tokenParsed;
   }
 
   getClientRoles(clientId: string): string[] {

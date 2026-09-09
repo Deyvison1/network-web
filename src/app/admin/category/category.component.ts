@@ -1,4 +1,3 @@
-import { pageCommons } from './../../consts/page.commons';
 import { CategorySearchDTO } from './../../models/interfaces/category-search.dto';
 import { ActionTypeBodyDTO } from './../../models/interfaces/action-type-body.dto';
 import { NotificationService } from './../../services/notification.service';
@@ -11,19 +10,25 @@ import { CategoryFormComponent } from './category-form/category-form.component';
 import { MatCardModule } from '@angular/material/card';
 import { CategoryDTO } from '../../models/category.dto';
 import { PageConfig } from '../../models/interfaces/page.config';
-import { HttpResponse } from '@angular/common/http';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActionType } from '../../consts/enums/action-type.enum';
 import { ActionTypeNotification } from '../../consts/enums/action-type-notification.enum';
-import { CategoryCompletDTO } from '../../models/interfaces/category-complet.dto';
-import { ResponseDTOPage } from '../../models/interfaces/page-response.dto';
-import { ICategoryDTO } from '../../models/interfaces/i-category.dto';
-import { CategoryFilterComponent } from "./category-filter/category-filter.component";
+import { ICategoryDTO } from '../../models/interfaces/icategory.dto';
+import { CategoryFilterComponent } from './category-filter/category-filter.component';
+import {
+  ApiResponseDTO,
+  PageApiResponseDTO,
+} from '../../models/interfaces/api-response.dto';
 
 @Component({
   selector: 'app-category',
   standalone: true,
-  imports: [CommonModule, CategoryListComponent, MatCardModule, CategoryFilterComponent],
+  imports: [
+    CommonModule,
+    CategoryListComponent,
+    MatCardModule,
+    CategoryFilterComponent,
+  ],
   templateUrl: './category.component.html',
   styleUrl: './category.component.scss',
 })
@@ -37,7 +42,6 @@ export class CategoryComponent {
   pageConfig: PageConfig;
 
   openDialogCategory(actionTypeBodyDTO: ActionTypeBodyDTO<string>) {
-
     const dialog = this.dialogService.open(CategoryFormComponent, {
       width: '1000px',
       data: actionTypeBodyDTO,
@@ -56,13 +60,6 @@ export class CategoryComponent {
     });
   }
 
-  findByIdComplet(uuid: string) {
-    this.categoryService.findByIdComplet(uuid).subscribe({
-      next: (category: CategoryCompletDTO) => {
-      },
-    });
-  }
-
   clear() {
     this.refreshDataSource(this.pageConfig);
   }
@@ -74,19 +71,19 @@ export class CategoryComponent {
   refreshDataSource(pageConfig: PageConfig, filters?: CategorySearchDTO) {
     this.pageConfig = pageConfig;
     this.categoryService.getAllCategoryPage(pageConfig, filters).subscribe({
-      next: (categories: HttpResponse<ResponseDTOPage<CategoryDTO[]>>) => {
-        this.dataSource = new MatTableDataSource(categories.body.content);
-        this.totalItens = categories.body.totalElements.toString();
+      next: (categories: PageApiResponseDTO<CategoryDTO[]>) => {
+        this.dataSource = new MatTableDataSource(categories.data);
+        this.totalItens = categories.total.toString();
       },
     });
   }
 
   editCategory(categoryDTO: ICategoryDTO) {
     this.categoryService.editCategory(categoryDTO).subscribe({
-      next: (category: CategoryDTO) => {
+      next: (category: ApiResponseDTO<CategoryDTO>) => {
         this.notificationService.notification(
           'Categoria atualizada com sucesso!',
-          ActionTypeNotification.SUCCESS
+          ActionTypeNotification.SUCCESS,
         );
         this.refreshDataSource(this.pageConfig);
       },
@@ -95,10 +92,10 @@ export class CategoryComponent {
 
   saveCategory(category: ICategoryDTO) {
     this.categoryService.insertCategory(category).subscribe({
-      next: (category: CategoryDTO) => {
+      next: (category: ApiResponseDTO<CategoryDTO>) => {
         this.notificationService.notification(
           'Categoria adicionada com sucesso!',
-          ActionTypeNotification.SUCCESS
+          ActionTypeNotification.SUCCESS,
         );
         this.refreshDataSource(this.pageConfig);
       },

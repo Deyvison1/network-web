@@ -1,5 +1,5 @@
 export interface ICategoryDTO {
-  uuid: string;
+  id: string;
   name: string;
   description: string;
 }

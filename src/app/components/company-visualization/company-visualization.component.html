@@ -1,21 +1,46 @@
-<mat-card
-  class="align-visualization-company mt-5 container shadow p-3 mb-5 bg-white rounded"
->
-  <div class="h3 text-center bold">
-    <p class="font-bold">{{ aboutTheCompany() | uppercase }}</p>
-    <p>
-      Fundada em 2015, nós da Suprema Network Telecom sempre atuamos com a
-      missão de levar para você a melhor conexão de internet com os menores
-      preços, fomos evoluindo junto a tecnologia e hoje estamos trabalhando com
-      uma rede 100% fibra óptica, contamos com uma equipe técnica de alto nivel,
-      de forma que possamos entregar para você uma conexão estável de altíssima
-      qualiade. Não perca tempo e entre já em contato conosco para conhecer
-      nossos planos.
-    </p>
-    <p>
-      <button class="btn btn-primary" (click)="openModalQrCode()">
-        Assine já
-      </button>
-    </p>
+<section class="company-section">
+  <div class="container">
+    <mat-card class="company-card">
+      <div class="company-content">
+        <div class="company-heading">
+          <span class="company-label"> SOBRE NÓS </span>
+
+          <h2>
+            {{ aboutTheCompany() | uppercase }}
+          </h2>
+        </div>
+
+        <div class="company-text">
+          <p>
+            Fundada em 2015, nós da Suprema Network Telecom sempre atuamos com a
+            missão de levar para você a melhor conexão de internet com os
+            menores preços.
+          </p>
+
+          <p>
+            Fomos evoluindo junto à tecnologia e hoje trabalhamos com uma rede
+            <strong>100% fibra óptica</strong>, contando com uma equipe técnica
+            de alto nível para entregar uma conexão estável e de altíssima
+            qualidade.
+          </p>
+
+          <p>
+            Não perca tempo. Entre em contato conosco e conheça nossos planos.
+          </p>
+        </div>
+
+        <div class="company-action">
+          <button
+            type="button"
+            class="company-button"
+            (click)="openModalQrCode()"
+          >
+            <span>Assine já</span>
+
+            <em class="fa-solid fa-arrow-right"></em>
+          </button>
+        </div>
+      </div>
+    </mat-card>
   </div>
-</mat-card>
+</section>

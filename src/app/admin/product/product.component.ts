@@ -1,27 +1,35 @@
-import { Component, inject } from '@angular/core';
-import { ProductListComponent } from './product-list/product-list.component';
 import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
+import { firstValueFrom } from 'rxjs';
+
+import { ProductListComponent } from './product-list/product-list.component';
+import { ProductFilterComponent } from './product-filter/product-filter.component';
+import { ProductFormComponent } from './product-form/product-form.component';
+
+import { DeleteDialogComponent } from '../../components/delete-dialog/delete-dialog.component';
+
 import { ProductService } from '../../services/product.service';
+import { NotificationService } from '../../services/notification.service';
+
 import { PageConfig } from '../../models/interfaces/page.config';
 import { ProductDTO } from '../../models/product.dto';
-import { HttpResponse } from '@angular/common/http';
-import { ActionTypeBodyDTO } from '../../models/interfaces/action-type-body.dto';
-import { MatDialog } from '@angular/material/dialog';
-import { ProductFormComponent } from './product-form/product-form.component';
-import { firstValueFrom } from 'rxjs';
-import { NotificationService } from '../../services/notification.service';
-import { ActionTypeNotification } from '../../consts/enums/action-type-notification.enum';
-import { MatTableDataSource } from '@angular/material/table';
-import { ActionType } from '../../consts/enums/action-type.enum';
-import { DeleteDialogComponent } from '../../components/delete-dialog/delete-dialog.component';
-import { ResponseDTOPage } from '../../models/interfaces/page-response.dto';
-import { ProductFilterComponent } from "./product-filter/product-filter.component";
 import { ProductFilterDTO } from '../../models/interfaces/product-filter.dto';
+import {
+  ApiResponseDTO,
+  PageApiResponseDTO,
+} from '../../models/interfaces/api-response.dto';
+import { ActionTypeBodyDTO } from '../../models/interfaces/action-type-body.dto';
+
+import { ActionType } from '../../consts/enums/action-type.enum';
+import { ActionTypeNotification } from '../../consts/enums/action-type-notification.enum';
 
 @Component({
   selector: 'app-product',
-  imports: [CommonModule, ProductListComponent, ProductFilterComponent],
   standalone: true,
+  imports: [CommonModule, ProductListComponent, ProductFilterComponent],
   templateUrl: './product.component.html',
   styleUrl: './product.component.scss',
 })
@@ -29,30 +37,43 @@ export class ProductComponent {
   private readonly service = inject(ProductService);
   private readonly dialogService = inject(MatDialog);
   private readonly notificationService = inject(NotificationService);
-  totalItens: string;
-  dataSource: MatTableDataSource<ProductDTO>;
-  pageConfig: PageConfig;
 
-  getAllProducts(pageConfig: PageConfig, filters?: ProductFilterDTO) {
+  totalItens = '0';
+
+  dataSource = new MatTableDataSource<ProductDTO>();
+
+  pageConfig: PageConfig = {
+    pageIndex: 0,
+    pageSize: 5,
+    sortBy: 'creationDate,desc',
+  };
+
+  getAllProducts(pageConfig: PageConfig, filters?: ProductFilterDTO): void {
     this.pageConfig = pageConfig;
+
     this.service.getAllProductsPage(pageConfig, filters).subscribe({
-      next: (resp: HttpResponse<ResponseDTOPage<ProductDTO[]>>) => {
-        this.dataSource = new MatTableDataSource(resp.body.content);
-        this.totalItens = resp.body.totalElements.toString();
+      next: (resp: PageApiResponseDTO<ProductDTO[]>) => {
+        this.dataSource = new MatTableDataSource<ProductDTO>(resp.data ?? []);
+
+        this.totalItens = resp.total?.toString() ?? '0';
       },
     });
   }
 
-  clear() {
+  clear(): void {
     this.getAllProducts(this.pageConfig);
   }
 
-  search(filters: ProductFilterDTO) {
+  search(filters: ProductFilterDTO): void {
     this.getAllProducts(this.pageConfig, filters);
   }
 
-  openDialogDeleteProduct(actionTypeBodyDTO: ActionTypeBodyDTO<string>) {
-    const dialogRef = this.dialogService.open(DeleteDialogComponent, {});
+  openDialogDeleteProduct(actionTypeBodyDTO: ActionTypeBodyDTO<string>): void {
+    const dialogRef = this.dialogService.open(DeleteDialogComponent, {
+      width: '400px',
+      data: actionTypeBodyDTO,
+    });
+
     dialogRef.afterClosed().subscribe((resp) => {
       if (resp) {
         this.delete(actionTypeBodyDTO.body);
@@ -60,98 +81,109 @@ export class ProductComponent {
     });
   }
 
-  delete(uuid: string) {
-    this.service.deleteProduct(uuid).subscribe({
+  delete(id: string): void {
+    this.service.deleteProduct(id).subscribe({
       complete: () => {
         this.notificationService.notification(
           'Registro deletado com sucesso',
-          ActionTypeNotification.SUCCESS
+          ActionTypeNotification.SUCCESS,
         );
+
         this.getAllProducts({
           pageIndex: 0,
           pageSize: 5,
-          sortBy: 'created,desc',
+          sortBy: 'creationDate,desc',
         });
       },
     });
   }
 
-  async openDialogProduct(actionTypeBodyDTO: ActionTypeBodyDTO<ProductDTO>) {
+  async openDialogProduct(
+    actionTypeBodyDTO: ActionTypeBodyDTO<ProductDTO>,
+  ): Promise<void> {
     try {
-      // Aguarda o retorno do produto
-      let productDTO: ProductDTO;
+      let productDTO: ProductDTO | undefined;
+
       if (actionTypeBodyDTO.actionType === ActionType.EDIT) {
-        productDTO = await firstValueFrom(
-          this.service.getByUUid(actionTypeBodyDTO.body.uuid)
+        const response = await firstValueFrom(
+          this.service.getByUUid(actionTypeBodyDTO.body.id),
         );
+
+        productDTO = response.data;
       }
-      const actionTypeBody: ActionTypeBodyDTO<ProductDTO> = {
+
+      const actionTypeBody: ActionTypeBodyDTO<ProductDTO | undefined> = {
         actionType: actionTypeBodyDTO.actionType,
         body: productDTO,
       };
-      // Só abre o diálogo depois que o produto estiver disponível
+
       const dialog = this.dialogService.open(ProductFormComponent, {
-        width: '2000px',
+        width: '900px',
+        maxWidth: '95vw',
         data: actionTypeBody,
-        // você pode passar o productDTO aqui se quiser
       });
 
       dialog.beforeClosed().subscribe({
-        next: (productDTO: ProductDTO) => {
-          if (productDTO) {
-            this.save(productDTO, actionTypeBodyDTO.actionType);
+        next: (product: ProductDTO | undefined) => {
+          if (product) {
+            this.save(product, actionTypeBodyDTO.actionType);
           }
         },
       });
     } catch (error) {
+      console.log(error);
+
       this.notificationService.notification(
         this.setMessageErro(error),
-        ActionTypeNotification.ERRO
+        ActionTypeNotification.ERRO,
       );
     }
   }
 
-  save(productDTO: ProductDTO, actionType: ActionType) {
+  save(productDTO: ProductDTO, actionType: ActionType): void {
     if (actionType === ActionType.INSERT) {
-      this.inserProduct(productDTO);
-    } else {
-      this.updateProduct(productDTO);
+      this.insertProduct(productDTO);
+      return;
     }
+
+    this.updateProduct(productDTO);
   }
 
-  updateProduct(product: ProductDTO) {
-    this.service.editProduct(product.uuid, product).subscribe({
-      next: (productDTO: ProductDTO) => {
+  updateProduct(product: ProductDTO): void {
+    this.service.editProduct(product.id, product).subscribe({
+      next: (response: ApiResponseDTO<ProductDTO>) => {
         this.getAllProducts({
           pageIndex: 0,
           pageSize: 5,
-          sortBy: 'created,desc',
+          sortBy: 'creationDate,desc',
         });
+
         this.notificationService.notification(
           'Sucesso',
-          ActionTypeNotification.SUCCESS
+          ActionTypeNotification.SUCCESS,
         );
       },
     });
   }
 
-  inserProduct(product: ProductDTO) {
+  insertProduct(product: ProductDTO): void {
     this.service.insertProduct(product).subscribe({
-      next: (productDTO: ProductDTO) => {
+      next: (response: ApiResponseDTO<ProductDTO>) => {
         this.getAllProducts({
           pageIndex: 0,
           pageSize: 5,
-          sortBy: 'created,desc',
+          sortBy: 'creationDate,desc',
         });
+
         this.notificationService.notification(
           'Sucesso',
-          ActionTypeNotification.SUCCESS
+          ActionTypeNotification.SUCCESS,
         );
       },
     });
   }
 
-  setMessageErro(error: any) {
+  setMessageErro(error: unknown): string {
     return NotificationService.getError(error);
   }
 }

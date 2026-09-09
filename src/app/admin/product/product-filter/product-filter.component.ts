@@ -21,6 +21,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ProductFilterDTO } from '../../../models/interfaces/product-filter.dto';
+import { KeyValueDTO } from '../../../models/interfaces/key-value.dto';
+import { CategoryService } from '../../../services/category.service';
+import { ApiResponseDTO } from '../../../models/interfaces/api-response.dto';
 
 @Component({
   selector: 'app-product-filter',
@@ -46,28 +49,41 @@ import { ProductFilterDTO } from '../../../models/interfaces/product-filter.dto'
 export class ProductFilterComponent implements OnInit {
   private readonly fb: FormBuilder = inject(FormBuilder);
   private readonly currencyPipe: CurrencyPipe = inject(CurrencyPipe);
+  private readonly categoryService: CategoryService = inject(CategoryService);
   readonly panelOpenState = signal(false);
   searchEvent = output<ProductFilterDTO>();
   clearEvent = output<void>();
   formattedAmount: string;
+  categories: KeyValueDTO[] = [];
   rawAmount: number;
   form: FormGroup;
 
   ngOnInit(): void {
     this.initForm();
+    this.getAllCategories();
   }
 
   initForm() {
     this.form = this.fb.group({
       name: [''],
-      category: [],
+      categoryId: [],
       description: [''],
       speedDownload: [],
       speedUpload: [],
       valueWifi: [],
       value: [],
       taxaAdesao: [],
-      created: []
+      creationDate: []
+    });
+  }
+
+  getAllCategories() {
+    this.categoryService.getAllCategory().subscribe({
+      next: (resp: ApiResponseDTO<KeyValueDTO[]>) => {
+        this.categories = resp.data;
+      }, error: (err) => {
+
+      }
     });
   }
 

@@ -23,7 +23,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActionType } from '../../../consts/enums/action-type.enum';
 import { ActionTypeBodyDTO } from '../../../models/interfaces/action-type-body.dto';
 import { ActionTypeNotification } from '../../../consts/enums/action-type-notification.enum';
-import { ICategoryDTO } from '../../../models/interfaces/i-category.dto';
+import { ICategoryDTO } from '../../../models/interfaces/icategory.dto';
 
 @Component({
   selector: 'app-category-list',
@@ -76,23 +76,23 @@ export class CategoryListComponent implements OnInit {
   openDialogCategory(actionType: ActionType, category: ICategoryDTO) {
     this.openDialogCategoryEmitter.emit({
       actionType: actionType,
-      body: category?.uuid,
+      body: category?.id,
     });
   }
 
-  openDialogDeleteCategory(uuid: string) {
+  openDialogDeleteCategory(id: string) {
     const dialogRef = this.dialogService.open(DeleteDialogComponent, {
       width: '400px',
     });
     dialogRef.afterClosed().subscribe((resp) => {
       if (resp) {
-        this.delete(uuid);
+        this.delete(id);
       }
     });
   }
 
-  delete(uuid: string) {
-    this.categoryService.deleteCategory(uuid).subscribe({
+  delete(id: string) {
+    this.categoryService.deleteCategory(id).subscribe({
       next: () => {
         this.notificationService.notification(
           'Deletado com sucesso',
@@ -110,7 +110,7 @@ export class CategoryListComponent implements OnInit {
 
   setSortBy(sort: Sort) {
     this.sort = sort;
-    return !sort.direction ? 'created' : sort.active + ',' + sort.direction;
+    return !sort.direction ? 'creationDate' : sort.active + ',' + sort.direction;
   }
 
   changeSortBy(sort: Sort) {
