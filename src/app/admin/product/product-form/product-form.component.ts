@@ -13,6 +13,7 @@ import { ActionTypeBodyDTO } from '../../../models/interfaces/action-type-body.d
 import { ActionType } from '../../../consts/enums/action-type.enum';
 import { ApiResponseDTO } from '../../../models/interfaces/api-response.dto';
 import { KeyValueDTO } from '../../../models/interfaces/key-value.dto';
+import { NgxCurrencyDirective } from "ngx-currency";
 
 @Component({
   selector: 'app-product-form',
@@ -21,7 +22,8 @@ import { KeyValueDTO } from '../../../models/interfaces/key-value.dto';
     ReactiveFormsModule,
     DragAndDropComponent,
     ErroComponent,
-  ],
+    NgxCurrencyDirective
+],
   standalone: true,
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.component.scss',
@@ -30,17 +32,7 @@ export class ProductFormComponent implements OnInit {
   title: string = 'Produto';
   private readonly requiredsCommons = requiredsCommons;
   private readonly categoryService = inject(CategoryService);
-  private readonly fields: string[] = [
-    'id',
-    'name',
-    'speedDownload',
-    'speedUpload',
-    'taxaAdesao',
-    'valueWifi',
-    'value',
-    'description',
-    'categoryId',
-  ];
+  private readonly fields: string[] = requiredsCommons.fieldsProduct;
 
   categories: KeyValueDTO[] = [];
   form: FormGroup;
@@ -54,6 +46,8 @@ export class ProductFormComponent implements OnInit {
       this.fields,
       this.requiredsCommons.requiredsProduct,
     );
+
+    this.form.get('categoryId').setValue(null);
     this.getAllCaregories();
 
     this.inserOrEdit();
@@ -80,8 +74,12 @@ export class ProductFormComponent implements OnInit {
   compareFn(c1: string | null, c2: string | null): boolean {
     return c1 === c2;
   }
-  save() {
-    const product = this.form.getRawValue();
-    this.close(product);
+  save(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.close(this.form.value);
   }
 }

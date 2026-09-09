@@ -17,6 +17,7 @@ import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { pageCommons } from '../../../consts/page.commons';
 import { ActionTypeBodyDTO } from '../../../models/interfaces/action-type-body.dto';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { AuthRoleDirective } from '../../../directives/auth-role.directive';
 
 @Component({
   selector: 'app-product-list',
@@ -26,7 +27,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatTooltipModule
+    MatTooltipModule,
+    AuthRoleDirective
 ],
   standalone: true,
   templateUrl: './product-list.component.html',
@@ -42,7 +44,7 @@ export class ProductListComponent implements OnInit {
   public readonly ActionType = ActionType;
   refreshDataSource = output<PageConfig>();
   openDialogProductEmitter = output<ActionTypeBodyDTO<ProductDTO>>();
-  openDialogDeleteProductEmitter = output<ActionTypeBodyDTO<string>>();
+  openDialogDeleteProductEmitter = output<string>();
 
   @Input() set setDataSource(data: MatTableDataSource<ProductDTO>) {
     if (data) this.dataSource = data;
@@ -85,9 +87,6 @@ export class ProductListComponent implements OnInit {
   }
 
   openDialogDeleteProduct(id: string) {
-    this.openDialogDeleteProductEmitter.emit({
-      actionType: ActionType.DELETE,
-      body: id,
-    });
+    this.openDialogDeleteProductEmitter.emit(id);
   }
 }

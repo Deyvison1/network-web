@@ -8,9 +8,19 @@ export const requiredsCommons = {
     'valueWifi',
     'value',
     'description',
-    'category',
+    'categoryId',
   ],
-  requiredsUser: ['nick', 'password', 'roles', 'email'],
-  requiredLogin: ['nick', 'password'],
-  requiredRole: ['name', 'description']
+
+  fieldsCategory: ['id', 'name', 'description'],
+  fieldsProduct: [
+    'id',
+    'name',
+    'speedDownload',
+    'speedUpload',
+    'taxaAdesao',
+    'valueWifi',
+    'value',
+    'description',
+    'categoryId',
+  ],
 };

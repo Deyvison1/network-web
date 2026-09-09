@@ -1,4 +1,4 @@
-@if (products.length) {
+@if (products().length) {
   <section class="plans-section">
     <div class="container">
       <div class="plans-header">
@@ -10,7 +10,7 @@
       </div>
 
       <div class="plans-list">
-        @for (product of products; track product.id) {
+        @for (product of products(); track product.id) {
           <mat-card class="plan-card">
             <div class="plan-card-header">
               <span class="category-badge">

@@ -1,16 +1,18 @@
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 
 export class FormUtil {
   static buildForm(fields: string[] = [], requireds: string[] = []): FormGroup {
     const form = new FormGroup({});
 
-    fields.forEach((p) => {
-      if (requireds.indexOf(p) > -1) {
-        form.addControl(p, new FormControl('', Validators.required));
-      } else {
-        form.addControl(p, new FormControl(''));
-      }
+    fields.forEach((field) => {
+      const validators = requireds.includes(field) ? [Validators.required] : [];
+      form.addControl(field, new FormControl('', validators));
     });
+
     return form;
+  }
+
+  static isInvalid(control: AbstractControl | null): boolean {
+    return !!control && control.invalid && control.touched;
   }
 }

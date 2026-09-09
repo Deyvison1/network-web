@@ -1,86 +1,114 @@
-<mat-card class="mt-5 container">
+<mat-card class="admin-card">
   <mat-card-content>
-    <div class="d-flex justify-content-between pb-3">
+    <div class="admin-card__header">
       <h2>Filtrar Produtos</h2>
-      <div>
-        <button type="submit" class="btn btn-warning" (click)="clear()">
+
+      <div class="admin-card__actions">
+        <button type="button" class="btn btn-warning" (click)="clear()">
           Limpar
         </button>
 
         <button
           type="submit"
-          class="btn btn-success ml-lg-5"
-          (click)="search()"
+          class="btn btn-success"
+          form="product-filter-form"
         >
           Pesquisar
         </button>
       </div>
     </div>
 
-    <form [formGroup]="form">
-      <div class="row">
-        <div class="col">
-          <label for="name">Nome</label>
+    <form
+      id="product-filter-form"
+      class="admin-form"
+      [formGroup]="form"
+      (ngSubmit)="search()"
+    >
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="admin-label" for="product-name"> Nome </label>
+
           <input
+            id="product-name"
             type="text"
             class="form-control"
             formControlName="name"
-            placeholder="Informe o Nome"
+            placeholder="Informe o nome"
           />
         </div>
-        <div class="col">
-          <label for="description">Descrição</label>
+
+        <div class="col-md-4">
+          <label class="admin-label" for="product-description">
+            Descrição
+          </label>
+
           <input
+            id="product-description"
             type="text"
             class="form-control"
             formControlName="description"
-            placeholder="Informe a Descrição"
+            placeholder="Informe a descrição"
           />
         </div>
-        <div class="col">
-          <label for="creationDate">Data de Criação</label>
+
+        <div class="col-md-4">
+          <label class="admin-label" for="creation-date">
+            Data de Criação
+          </label>
+
           <input
+            id="creation-date"
             type="date"
             formControlName="creationDate"
             class="form-control"
           />
         </div>
       </div>
+
       <mat-accordion>
-        <mat-expansion-panel
-          class="mt-2"
-          (opened)="panelOpenState.set(true)"
-          (closed)="panelOpenState.set(false)"
-        >
+        <mat-expansion-panel class="mt-2">
           <mat-expansion-panel-header>
             <mat-panel-title class="color-warning">
               Filtros avançados!
             </mat-panel-title>
+
             <mat-panel-description> </mat-panel-description>
           </mat-expansion-panel-header>
 
-          <div class="row">
-            <div class="col">
-              <label for="sppedDownload">Velocidade de Download</label>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="admin-label" for="speed-download">
+                Velocidade de Download
+              </label>
+
               <input
+                id="speed-download"
                 type="number"
                 class="form-control"
                 formControlName="speedDownload"
                 placeholder="Velocidade de Download"
               />
             </div>
-            <div class="col">
-              <label for="sppedUpload">Velocidade de Upload</label>
+
+            <div class="col-md-4">
+              <label class="admin-label" for="speed-upload">
+                Velocidade de Upload
+              </label>
+
               <input
+                id="speed-upload"
                 type="number"
                 class="form-control"
                 formControlName="speedUpload"
                 placeholder="Velocidade de Upload"
               />
             </div>
-            <div class="col">
-              <label for="category">Categoria</label>
+
+            <div class="col-md-4">
+              <label class="admin-label" for="category">Categoria</label>
+
               <select
+                id="category"
                 [ngClass]="{
                   'is-invalid':
                     form.get('categoryId').errors &&
@@ -89,51 +117,78 @@
                 class="form-control"
                 formControlName="categoryId"
               >
+                <option [ngValue]="null" disabled>
+                  Selecione uma categoria
+                </option>
+
                 <option
                   *ngFor="let category of categories"
                   [ngValue]="category"
-                  [value]="category.key"
                 >
                   {{ category.value }}
                 </option>
               </select>
             </div>
           </div>
-          <div class="row">
-            <div class="col">
-              <label for="taxaAdesao">Taxa de Adesão</label>
+
+          <div class="row g-3 mt-1">
+            <div class="col-md-4">
+              <label class="admin-label" for="taxa-adesao">
+                Taxa de Adesão
+              </label>
+
               <input
-                type="number"
+                id="taxa-adesao"
+                type="text"
                 formControlName="taxaAdesao"
                 class="form-control"
                 placeholder="Taxa de Adesão"
-                (blur)="normalizePrice(form.controls['taxaAdesao'].value)"
                 step="0.01"
                 min="0"
+                [currencyMask]="{
+                  prefix: 'R$ ',
+                  thousands: '.',
+                  decimal: ',',
+                  precision: 2,
+                }"
               />
             </div>
-            <div class="col">
-              <label for="valueWifi">Valor Wifi</label>
+
+            <div class="col-md-4">
+              <label class="admin-label" for="value-wifi"> Valor Wifi </label>
+
               <input
-                type="number"
+                id="value-wifi"
+                type="text"
                 formControlName="valueWifi"
                 class="form-control"
-                (blur)="normalizePrice(form.controls['valueWifi'].value)"
                 step="0.01"
                 min="0"
                 placeholder="Valor Wifi"
+                [currencyMask]="{
+                  prefix: 'R$ ',
+                  thousands: '.',
+                  decimal: ',',
+                  precision: 2,
+                }"
               />
             </div>
-            <div class="col">
-              <label for="value">Valor</label>
+
+            <div class="col-md-4">
+              <label class="admin-label" for="value"> Valor </label>
+
               <input
-                type="number"
-                formControlName="value"
+                type="text"
+                inputmode="decimal"
                 class="form-control"
+                formControlName="value"
                 placeholder="Valor"
-                (blur)="normalizePrice(form.controls['value'].value)"
-                step="0.01"
-                min="0"
+                [currencyMask]="{
+                  prefix: 'R$ ',
+                  thousands: '.',
+                  decimal: ',',
+                  precision: 2,
+                }"
               />
             </div>
           </div>

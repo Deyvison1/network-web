@@ -1,40 +1,33 @@
-<mat-card class="mt-5 container">
+<mat-card class="admin-card">
   <mat-card-content>
-    <div class="d-flex justify-content-between pb-3">
-      <h2>Filtrar Categoria</h2>
-      <div>
-        <button type="submit" class="btn btn-warning" (click)="clear()">
-          Limpar
-        </button>
-
-        <button
-          type="submit"
-          class="btn btn-success ml-lg-5"
-          (click)="search()"
-        >
-          Pesquisar
-        </button>
+    <div class="admin-card__header">
+      <h2>Filtrar categorias</h2>
+      <div class="admin-card__actions">
+        <button type="button" class="btn btn-warning" (click)="clear()">Limpar</button>
+        <button type="submit" class="btn btn-success" form="category-filter-form">Pesquisar</button>
       </div>
     </div>
 
-    <form [formGroup]="form">
-      <div class="row">
-        <div class="col">
-          <label for="name">Nome</label>
+    <form id="category-filter-form" class="admin-form" [formGroup]="form" (ngSubmit)="search()">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="admin-label" for="category-name">Nome</label>
           <input
+            id="category-name"
             type="text"
             class="form-control"
             formControlName="name"
-            placeholder="Informe o Nome"
+            placeholder="Informe o nome"
           />
         </div>
-        <div class="col">
-          <label for="description">Descrição</label>
+        <div class="col-md-6">
+          <label class="admin-label" for="category-description">Descrição</label>
           <input
+            id="category-description"
             type="text"
             class="form-control"
             formControlName="description"
-            placeholder="Informe a Descrição"
+            placeholder="Informe a descrição"
           />
         </div>
       </div>

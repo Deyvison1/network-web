@@ -1,0 +1,27 @@
+.qr-dialog {
+  position: relative;
+  padding: 28px 24px 32px;
+  text-align: center;
+}
+
+.close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+h3 {
+  margin: 8px 0 8px;
+  font-weight: 800;
+}
+
+p {
+  margin: 0 0 20px;
+  color: var(--sn-muted);
+}
+
+img {
+  width: min(280px, 100%);
+  height: auto;
+  border-radius: 16px;
+}

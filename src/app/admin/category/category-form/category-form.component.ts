@@ -1,75 +1,54 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { FormUtil } from '../../../utils/form.utils';
-import { CategoryDTO } from '../../../models/category.dto';
-import { requiredsCommons } from '../../../consts/requireds.commons';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
 import { DragAndDropComponent } from '../../../components/drag-and-drop/drag-and-drop.component';
 import { ErroComponent } from '../../../components/erro/erro.component';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ActionTypeBodyDTO } from '../../../models/interfaces/action-type-body.dto';
+import { FormUtil } from '../../../utils/form.utils';
+import { requiredsCommons } from '../../../consts/requireds.commons';
 import { ActionType } from '../../../consts/enums/action-type.enum';
-import { MatCardModule } from '@angular/material/card';
+import { ActionTypeBodyDTO } from '../../../models/interfaces/action-type-body.dto';
 import { ICategoryDTO } from '../../../models/interfaces/icategory.dto';
 import { CategoryService } from '../../../services/category.service';
-import { CategoryCompletDTO } from '../../../models/interfaces/category-complet.dto';
-import { ApiResponseDTO } from '../../../models/interfaces/api-response.dto';
 
 @Component({
   selector: 'app-category-form',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    DragAndDropComponent,
-    ErroComponent,
-    MatCardModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, DragAndDropComponent, ErroComponent],
   templateUrl: './category-form.component.html',
   styleUrl: './category-form.component.scss',
 })
 export class CategoryFormComponent implements OnInit {
-  private readonly requiredsCommons = requiredsCommons;
   private readonly categoryService = inject(CategoryService);
   private readonly dialogRef = inject(MatDialogRef<CategoryFormComponent>);
-  private readonly fields: string[] = ['id', 'name', 'description'];
-  data = inject<ActionTypeBodyDTO<string>>(MAT_DIALOG_DATA);
-  categoryCompletSelected: CategoryCompletDTO;
+  private readonly fields = requiredsCommons.fieldsCategory;
 
-  title: string = 'Adicionar Categoria';
+  readonly data = inject<ActionTypeBodyDTO<string>>(MAT_DIALOG_DATA);
+  form!: FormGroup;
+  title = 'Adicionar categoria';
 
-  form: FormGroup;
+  ngOnInit(): void {
+    this.form = FormUtil.buildForm(this.fields, requiredsCommons.requiredsCategory);
+    this.title = this.data.body ? 'Atualizar categoria' : 'Adicionar categoria';
 
-  ngOnInit() {
-    this.initForm();
-    this.setTitle();
-  }
-
-  setTitle() {
-    this.title = this.data.body ? 'Atualizar Categoria' : 'Adicionar Categoria';
-  }
-
-  close(categoryDTO?: ICategoryDTO) {
-    this.dialogRef.close(categoryDTO);
-  }
-
-  initForm() {
-    this.form = FormUtil.buildForm(
-      this.fields,
-      this.requiredsCommons.requiredsCategory,
-    );
     if (this.data.actionType === ActionType.EDIT && this.data.body) {
       this.categoryService.findByIdComplet(this.data.body).subscribe({
-        next: (categoryCompletDTO: ApiResponseDTO<CategoryCompletDTO>) => {
-          this.categoryCompletSelected = categoryCompletDTO.data;
-          this.form.patchValue(this.categoryCompletSelected);
-        },
+        next: (response) => this.form.patchValue(response.data),
       });
     }
   }
 
-  saveCategory() {
-    const category: ICategoryDTO = this.form.value;
-    this.close(category);
+  close(category?: ICategoryDTO): void {
+    this.dialogRef.close(category);
+  }
+
+  save(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.close(this.form.value);
   }
 }

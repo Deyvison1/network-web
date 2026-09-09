@@ -1,10 +1,20 @@
 services:
-  angular-app:
+  network-app:
     build: .
-    container_name: angular-app
-    ports:
-      - '4200:4200'
-    volumes:
-      - ./:/angular-app
-    environment:
-      - STYLE=css
+    container_name: adoption-animal-app
+    restart: unless-stopped
+
+    networks:
+      - my-infra-docker
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.network-app-animal-adoption.rule=Host(`network-app.animal-adoption.com.br`)"
+      - "traefik.http.routers.network-app-animal-adoption.entrypoints=websecure"
+      - "traefik.http.routers.network-app-animal-adoption.tls=true"
+      - "traefik.http.routers.network-app-animal-adoption.tls.certresolver=letsencrypt"
+      - "traefik.http.services.network-app-animal-adoption.loadbalancer.server.port=80"
+
+networks:
+  my-infra-docker:
+    external: true

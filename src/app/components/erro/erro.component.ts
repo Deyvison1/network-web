@@ -3,13 +3,14 @@ import { AbstractControl } from '@angular/forms';
 
 @Component({
   selector: 'app-erro',
-  imports: [],
+  standalone: true,
   templateUrl: './erro.component.html',
   styleUrl: './erro.component.scss',
 })
 export class ErroComponent {
-  @Input() set setControl(control: AbstractControl) {
-    if (control) this.control = control;
+  control: AbstractControl | null = null;
+
+  @Input() set setControl(control: AbstractControl | null) {
+    this.control = control;
   }
-  control: AbstractControl;
 }

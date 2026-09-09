@@ -1,46 +1,41 @@
 <section class="company-section">
   <div class="container">
-    <mat-card class="company-card">
+    <article class="company-card">
       <div class="company-content">
         <div class="company-heading">
-          <span class="company-label"> SOBRE NÓS </span>
-
-          <h2>
-            {{ aboutTheCompany() | uppercase }}
-          </h2>
+          <span class="company-label">Sobre nós</span>
+          <h2>{{ aboutTheCompany() }}</h2>
         </div>
 
         <div class="company-text">
           <p>
-            Fundada em 2015, nós da Suprema Network Telecom sempre atuamos com a
-            missão de levar para você a melhor conexão de internet com os
-            menores preços.
+            Fundada em 2015, a Suprema Network Telecom nasceu com a missão de
+            levar uma conexão de qualidade, com preço justo e atendimento
+            próximo.
           </p>
-
           <p>
-            Fomos evoluindo junto à tecnologia e hoje trabalhamos com uma rede
-            <strong>100% fibra óptica</strong>, contando com uma equipe técnica
-            de alto nível para entregar uma conexão estável e de altíssima
-            qualidade.
-          </p>
-
-          <p>
-            Não perca tempo. Entre em contato conosco e conheça nossos planos.
+            Evoluímos junto da tecnologia e hoje operamos com uma rede
+            <strong>100% fibra óptica</strong>, com equipe técnica preparada
+            para entregar estabilidade no dia a dia.
           </p>
         </div>
 
-        <div class="company-action">
-          <button
-            type="button"
-            class="company-button"
-            (click)="openModalQrCode()"
-          >
-            <span>Assine já</span>
+        <ul class="company-highlights">
+          @for (item of highlights; track item.label) {
+            <li>
+              <em [class]="'fa-solid ' + item.icon"></em>
+              {{ item.label }}
+            </li>
+          }
+        </ul>
 
+        <div class="company-action">
+          <button type="button" class="company-button" (click)="openModalQrCode()">
+            <span>Assine já</span>
             <em class="fa-solid fa-arrow-right"></em>
           </button>
         </div>
       </div>
-    </mat-card>
+    </article>
   </div>
 </section>

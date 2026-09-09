@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
-import { ProductCategoryCompletDTO, ProductDTO } from '../../models/product.dto';
+import { Component, inject, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ViewQrCodeComponent } from '../view-qr-code/view-qr-code.component';
 import { MatCardModule } from '@angular/material/card';
+import { ProductCategoryCompletDTO } from '../../models/product.dto';
+import { ViewQrCodeComponent } from '../view-qr-code/view-qr-code.component';
 
 @Component({
   selector: 'app-products',
@@ -14,14 +14,13 @@ import { MatCardModule } from '@angular/material/card';
 })
 export class ProductsComponent {
   private readonly dialogService = inject(MatDialog);
-  @Input() products: ProductCategoryCompletDTO[] = [];
-  
-  constructor() {
-  }
-  openModalViewQrCode() {
+  products = input<ProductCategoryCompletDTO[]>([]);
+
+  openModalViewQrCode(): void {
     this.dialogService.open(ViewQrCodeComponent, {
-      width: '800',
-      height: '800',
+      width: '420px',
+      maxWidth: '95vw',
+      panelClass: 'app-dialog',
     });
   }
 }
