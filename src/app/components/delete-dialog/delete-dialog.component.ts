@@ -7,11 +7,12 @@ import { DragAndDropComponent } from '../drag-and-drop/drag-and-drop.component';
   standalone: true,
   imports: [DragAndDropComponent],
   templateUrl: './delete-dialog.component.html',
-  styleUrl: './delete-dialog.component.scss'
+  styleUrl: './delete-dialog.component.scss',
 })
 export class DeleteDialogComponent {
-  private readonly matDialog = inject(MatDialogRef);
-  cancel(isDelete?: boolean) {
-    this.matDialog.close(isDelete);
+  private readonly dialogRef = inject(MatDialogRef<DeleteDialogComponent>);
+
+  close(confirmed = false): void {
+    this.dialogRef.close(confirmed);
   }
 }

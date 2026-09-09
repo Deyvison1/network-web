@@ -1,3 +1,6 @@
-.invalid-feedback {
-  display: flex;
+.field-error {
+  margin-top: 6px;
+  color: var(--sn-danger);
+  font-size: 12px;
+  font-weight: 600;
 }

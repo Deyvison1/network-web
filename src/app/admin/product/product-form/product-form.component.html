@@ -5,7 +5,7 @@
       <label for="name">Nome:</label>
       <input
         [ngClass]="{
-          'is-invalid': form.get('name').errors && form.get('name').touched
+          'is-invalid': form.get('name').errors && form.get('name').touched,
         }"
         class="form-control"
         type="text"
@@ -20,7 +20,7 @@
         [ngClass]="{
           'is-invalid':
             form.get('speedDownload').errors &&
-            form.get('speedDownload').touched
+            form.get('speedDownload').touched,
         }"
         class="form-control"
         type="number"
@@ -35,7 +35,7 @@
       <input
         [ngClass]="{
           'is-invalid':
-            form.get('speedUpload').errors && form.get('speedUpload').touched
+            form.get('speedUpload').errors && form.get('speedUpload').touched,
         }"
         class="form-control"
         type="number"
@@ -51,12 +51,18 @@
       <input
         [ngClass]="{
           'is-invalid':
-            form.get('taxaAdesao').errors && form.get('taxaAdesao').touched
+            form.get('taxaAdesao').errors && form.get('taxaAdesao').touched,
         }"
         class="form-control"
-        type="number"
+        type="text"
         formControlName="taxaAdesao"
         placeholder="Taxa de Adesão"
+        [currencyMask]="{
+          prefix: 'R$ ',
+          thousands: '.',
+          decimal: ',',
+          precision: 2,
+        }"
       />
       <app-erro [setControl]="form.get('taxaAdesao')"></app-erro>
     </div>
@@ -65,12 +71,18 @@
       <input
         [ngClass]="{
           'is-invalid':
-            form.get('valueWifi').errors && form.get('valueWifi').touched
+            form.get('valueWifi').errors && form.get('valueWifi').touched,
         }"
         class="form-control"
-        type="number"
+        type="text"
         formControlName="valueWifi"
         placeholder="Valor Wifi"
+        [currencyMask]="{
+          prefix: 'R$ ',
+          thousands: '.',
+          decimal: ',',
+          precision: 2,
+        }"
       />
       <app-erro [setControl]="form.get('valueWifi')"></app-erro>
     </div>
@@ -78,12 +90,18 @@
       <label for="value">Valor:</label>
       <input
         [ngClass]="{
-          'is-invalid': form.get('value').errors && form.get('value').touched
+          'is-invalid': form.get('value').errors && form.get('value').touched,
         }"
         class="form-control"
-        type="number"
+        type="text"
         formControlName="value"
         placeholder="Valor"
+        [currencyMask]="{
+          prefix: 'R$ ',
+          thousands: '.',
+          decimal: ',',
+          precision: 2,
+        }"
       />
       <app-erro [setControl]="form.get('value')"></app-erro>
     </div>
@@ -94,7 +112,7 @@
       <textarea
         [ngClass]="{
           'is-invalid':
-            form.get('description').errors && form.get('description').touched
+            form.get('description').errors && form.get('description').touched,
         }"
         class="form-control"
         name="description"
@@ -110,13 +128,18 @@
       <select
         [ngClass]="{
           'is-invalid':
-            form.get('categoryId').errors && form.get('categoryId').touched
+            form.get('categoryId').errors && form.get('categoryId').touched,
         }"
         class="form-control"
         formControlName="categoryId"
         [compareWith]="compareFn"
       >
-        <option *ngFor="let category of categories" [ngValue]="category" [value]="category.key">
+        <option [ngValue]="null" disabled>Selecione uma categoria</option>
+        <option
+          *ngFor="let category of categories"
+          [ngValue]="category"
+          [value]="category.key"
+        >
           {{ category.value }}
         </option>
       </select>
@@ -124,9 +147,11 @@
     </div>
   </div>
 
-  <div class="mt-2 d-flex justify-content-between">
-    <button (click)="close()" class="btn btn-secondary">Fechar</button>
-    <button [disabled]="!form.valid" (click)="save()" class="btn btn-success">
+  <div class="form-actions">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">
+      Cancelar
+    </button>
+    <button type="submit" class="btn btn-success" [disabled]="form.invalid">
       Salvar
     </button>
   </div>

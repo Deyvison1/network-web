@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { HttpResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { firstValueFrom } from 'rxjs';
@@ -8,7 +7,6 @@ import { firstValueFrom } from 'rxjs';
 import { ProductListComponent } from './product-list/product-list.component';
 import { ProductFilterComponent } from './product-filter/product-filter.component';
 import { ProductFormComponent } from './product-form/product-form.component';
-
 import { DeleteDialogComponent } from '../../components/delete-dialog/delete-dialog.component';
 
 import { ProductService } from '../../services/product.service';
@@ -17,173 +15,154 @@ import { NotificationService } from '../../services/notification.service';
 import { PageConfig } from '../../models/interfaces/page.config';
 import { ProductDTO } from '../../models/product.dto';
 import { ProductFilterDTO } from '../../models/interfaces/product-filter.dto';
-import {
-  ApiResponseDTO,
-  PageApiResponseDTO,
-} from '../../models/interfaces/api-response.dto';
 import { ActionTypeBodyDTO } from '../../models/interfaces/action-type-body.dto';
-
 import { ActionType } from '../../consts/enums/action-type.enum';
 import { ActionTypeNotification } from '../../consts/enums/action-type-notification.enum';
+import { pageCommons } from '../../consts/page.commons';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, ProductListComponent, ProductFilterComponent],
+  imports: [
+    CommonModule,
+    ProductListComponent,
+    ProductFilterComponent,
+    MatIconModule,
+  ],
   templateUrl: './product.component.html',
   styleUrl: './product.component.scss',
 })
 export class ProductComponent {
   private readonly service = inject(ProductService);
-  private readonly dialogService = inject(MatDialog);
+  private readonly dialog = inject(MatDialog);
   private readonly notificationService = inject(NotificationService);
 
-  totalItens = '0';
+  totalItens = 0;
+  dataSource = new MatTableDataSource<ProductDTO>([]);
+  pageConfig: PageConfig = { ...pageCommons };
+  private currentFilters?: ProductFilterDTO;
 
-  dataSource = new MatTableDataSource<ProductDTO>();
-
-  pageConfig: PageConfig = {
-    pageIndex: 0,
-    pageSize: 5,
-    sortBy: 'creationDate,desc',
-  };
-
-  getAllProducts(pageConfig: PageConfig, filters?: ProductFilterDTO): void {
+  getAllProducts(pageConfig: PageConfig, filters = this.currentFilters): void {
     this.pageConfig = pageConfig;
 
     this.service.getAllProductsPage(pageConfig, filters).subscribe({
-      next: (resp: PageApiResponseDTO<ProductDTO[]>) => {
-        this.dataSource = new MatTableDataSource<ProductDTO>(resp.data ?? []);
-
-        this.totalItens = resp.total?.toString() ?? '0';
+      next: (resp) => {
+        this.dataSource = new MatTableDataSource(resp.data ?? []);
+        this.totalItens = resp.total ?? 0;
       },
     });
   }
 
   clear(): void {
-    this.getAllProducts(this.pageConfig);
+    this.currentFilters = undefined;
+    this.getAllProducts({ ...pageCommons });
   }
 
   search(filters: ProductFilterDTO): void {
-    this.getAllProducts(this.pageConfig, filters);
+    this.currentFilters = filters;
+    this.getAllProducts({ ...this.pageConfig, pageIndex: 0 }, filters);
   }
 
-  openDialogDeleteProduct(actionTypeBodyDTO: ActionTypeBodyDTO<string>): void {
-    const dialogRef = this.dialogService.open(DeleteDialogComponent, {
-      width: '400px',
-      data: actionTypeBodyDTO,
+  openDialogDeleteProduct(id: string): void {
+    const dialogRef = this.dialog.open(DeleteDialogComponent, {
+      width: '420px',
+      panelClass: 'app-dialog',
     });
 
-    dialogRef.afterClosed().subscribe((resp) => {
-      if (resp) {
-        this.delete(actionTypeBodyDTO.body);
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.delete(id);
       }
     });
   }
 
-  delete(id: string): void {
-    this.service.deleteProduct(id).subscribe({
-      complete: () => {
-        this.notificationService.notification(
-          'Registro deletado com sucesso',
-          ActionTypeNotification.SUCCESS,
-        );
-
-        this.getAllProducts({
-          pageIndex: 0,
-          pageSize: 5,
-          sortBy: 'creationDate,desc',
-        });
-      },
+  openNewProduct(): void {
+    this.openDialogProduct({
+      actionType: ActionType.INSERT,
+      body: null,
     });
   }
 
   async openDialogProduct(
-    actionTypeBodyDTO: ActionTypeBodyDTO<ProductDTO>,
+    action: ActionTypeBodyDTO<ProductDTO | null>,
   ): Promise<void> {
     try {
-      let productDTO: ProductDTO | undefined;
+      let product: ProductDTO | undefined;
 
-      if (actionTypeBodyDTO.actionType === ActionType.EDIT) {
+      if (action.actionType === ActionType.EDIT && action.body?.id) {
         const response = await firstValueFrom(
-          this.service.getByUUid(actionTypeBodyDTO.body.id),
+          this.service.getByUUid(action.body.id),
         );
-
-        productDTO = response.data;
+        product = response.data;
       }
 
-      const actionTypeBody: ActionTypeBodyDTO<ProductDTO | undefined> = {
-        actionType: actionTypeBodyDTO.actionType,
-        body: productDTO,
-      };
-
-      const dialog = this.dialogService.open(ProductFormComponent, {
-        width: '900px',
+      const dialog = this.dialog.open(ProductFormComponent, {
+        width: '920px',
         maxWidth: '95vw',
-        data: actionTypeBody,
+        panelClass: 'app-dialog',
+        data: {
+          actionType: action.actionType,
+          body: product,
+        },
       });
 
-      dialog.beforeClosed().subscribe({
-        next: (product: ProductDTO | undefined) => {
-          if (product) {
-            this.save(product, actionTypeBodyDTO.actionType);
-          }
-        },
+      dialog.afterClosed().subscribe((result?: ProductDTO) => {
+        if (result) {
+          this.save(result, action.actionType);
+        }
       });
     } catch (error) {
       console.log(error);
-
       this.notificationService.notification(
-        this.setMessageErro(error),
+        NotificationService.getError(error),
         ActionTypeNotification.ERRO,
       );
     }
   }
 
-  save(productDTO: ProductDTO, actionType: ActionType): void {
+  private save(product: ProductDTO, actionType: ActionType): void {
     if (actionType === ActionType.INSERT) {
-      this.insertProduct(productDTO);
+      this.insertProduct(product);
       return;
     }
 
-    this.updateProduct(productDTO);
+    this.updateProduct(product);
   }
 
-  updateProduct(product: ProductDTO): void {
+  private updateProduct(product: ProductDTO): void {
     this.service.editProduct(product.id, product).subscribe({
-      next: (response: ApiResponseDTO<ProductDTO>) => {
-        this.getAllProducts({
-          pageIndex: 0,
-          pageSize: 5,
-          sortBy: 'creationDate,desc',
-        });
-
+      next: () => {
         this.notificationService.notification(
-          'Sucesso',
+          'Produto atualizado com sucesso!',
           ActionTypeNotification.SUCCESS,
         );
+        this.getAllProducts({ ...pageCommons });
       },
     });
   }
 
-  insertProduct(product: ProductDTO): void {
+  private insertProduct(product: ProductDTO): void {
     this.service.insertProduct(product).subscribe({
-      next: (response: ApiResponseDTO<ProductDTO>) => {
-        this.getAllProducts({
-          pageIndex: 0,
-          pageSize: 5,
-          sortBy: 'creationDate,desc',
-        });
-
+      next: () => {
         this.notificationService.notification(
-          'Sucesso',
+          'Produto cadastrado com sucesso!',
           ActionTypeNotification.SUCCESS,
         );
+        this.getAllProducts({ ...pageCommons });
       },
     });
   }
 
-  setMessageErro(error: unknown): string {
-    return NotificationService.getError(error);
+  private delete(id: string): void {
+    this.service.deleteProduct(id).subscribe({
+      complete: () => {
+        this.notificationService.notification(
+          'Produto excluído com sucesso!',
+          ActionTypeNotification.SUCCESS,
+        );
+        this.getAllProducts({ ...pageCommons });
+      },
+    });
   }
 }

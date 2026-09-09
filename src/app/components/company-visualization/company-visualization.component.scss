@@ -1,7 +1,35 @@
 .company-section {
-  padding: 80px 0;
+  padding: 48px 0 24px;
+  background: transparent;
+}
 
-  background: #ffffff;
+.company-card {
+  padding: 48px 56px;
+  border: 1px solid var(--sn-line);
+  border-radius: var(--sn-radius);
+  background: var(--sn-surface);
+  box-shadow: var(--sn-shadow);
+}
+
+.company-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--sn-primary-soft);
+    color: var(--sn-primary);
+    font-size: 13px;
+    font-weight: 700;
+  }
 }
 
 .company-card {

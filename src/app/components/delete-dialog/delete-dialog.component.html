@@ -1,8 +1,14 @@
-<app-drag-and-drop (closedDialog)="cancel(false)"></app-drag-and-drop>
-<div class="p-3">
-  <h4 class="text-center">Deseja excluir esse registro?</h4>
-  <div class="d-flex justify-content-between">
-    <button class="btn btn-success" (click)="cancel(true)">Sim</button>
-    <button class="btn btn-danger" (click)="cancel(false)">Não</button>
+<app-drag-and-drop title="Excluir registro" (closedDialog)="close(false)"></app-drag-and-drop>
+
+<div class="delete-body">
+  <p>Essa ação não pode ser desfeita. Deseja realmente excluir este registro?</p>
+
+  <div class="delete-actions">
+    <button type="button" class="btn btn-outline-secondary" (click)="close(false)">
+      Cancelar
+    </button>
+    <button type="button" class="btn btn-danger" (click)="close(true)">
+      Excluir
+    </button>
   </div>
 </div>

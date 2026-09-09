@@ -1,6 +1,8 @@
-<mat-card class="container align-center mt-5 p-5">
-  <h1>Voçê não tem permissão para acessar essa pagina!</h1>
-  <button mat-icon-button matTooltip="Voltar para página inicial" (click)="redirectionTo('/home')">
-    <mat-icon style="color: #ffa700e0">assignment_late</mat-icon>
-  </button>
-</mat-card>
+<section class="forbidden">
+  <div class="forbidden-card">
+    <span>403</span>
+    <h1>Você não tem permissão para acessar esta página</h1>
+    <p>Entre em contato com um administrador se acredita que isso é um engano.</p>
+    <a mat-flat-button color="primary" routerLink="/home">Voltar para o início</a>
+  </div>
+</section>

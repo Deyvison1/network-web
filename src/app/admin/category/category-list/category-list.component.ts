@@ -1,29 +1,17 @@
-import { NotificationService } from './../../../services/notification.service';
-import { CategoryDTO } from './../../../models/category.dto';
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  inject,
-  input,
-  Input,
-  OnInit,
-  output,
-  ViewChild,
-} from '@angular/core';
+import { Component, input, OnInit, output, ViewChild } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
-import { PageConfig } from '../../../models/interfaces/page.config';
-import { pageCommons } from '../../../consts/page.commons';
-import { CategoryService } from '../../../services/category.service';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DeleteDialogComponent } from '../../../components/delete-dialog/delete-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-import { ActionType } from '../../../consts/enums/action-type.enum';
+
+import { CategoryDTO } from '../../../models/category.dto';
+import { PageConfig } from '../../../models/interfaces/page.config';
 import { ActionTypeBodyDTO } from '../../../models/interfaces/action-type-body.dto';
-import { ActionTypeNotification } from '../../../consts/enums/action-type-notification.enum';
-import { ICategoryDTO } from '../../../models/interfaces/icategory.dto';
+import { ActionType } from '../../../consts/enums/action-type.enum';
+import { buildSortBy, pageCommons } from '../../../consts/page.commons';
+import { AuthRoleDirective } from '../../../directives/auth-role.directive';
 
 @Component({
   selector: 'app-category-list',
@@ -35,87 +23,49 @@ import { ICategoryDTO } from '../../../models/interfaces/icategory.dto';
     MatTableModule,
     MatSortModule,
     MatTooltipModule,
+    AuthRoleDirective,
   ],
   templateUrl: './category-list.component.html',
   styleUrl: './category-list.component.scss',
 })
 export class CategoryListComponent implements OnInit {
-  private readonly categoryService = inject(CategoryService);
-  private readonly notificationService = inject(NotificationService);
+  @ViewChild(MatSort, { static: true }) sort?: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
-  totalItens = input();
-  @ViewChild(MatSort, { static: true }) sort: Sort;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  pageCommons: PageConfig = pageCommons;
-  @Input() set setDataSource(data: MatTableDataSource<CategoryDTO>) {
-    if (data) this.dataSource = data;
-  }
+  readonly ActionType = ActionType;
+  readonly displayedColumns = ['name', 'description', 'actions'];
 
-  public readonly ActionType = ActionType;
-  private readonly dialogService = inject(MatDialog);
+  totalItens = input(0);
+  dataSource = input.required<MatTableDataSource<CategoryDTO>>();
 
-  dataSource: MatTableDataSource<CategoryDTO>;
-  displayedColumns: string[] = ['name', 'description', 'actions'];
-  openDialogCategoryEmitter = output<ActionTypeBodyDTO<string>>();
-  
+  openDialogCategory = output<ActionTypeBodyDTO<string>>();
   refreshDataSource = output<PageConfig>();
+  deleteCategory = output<string>();
 
   ngOnInit(): void {
-    this.getCategories();
+    this.emitPage();
   }
 
-  getCategories(sortBy?: string) {
-    const paginator: PageConfig = {
-      pageIndex: this.paginator.pageIndex,
-      pageSize: (this.paginator.pageSize)? this.paginator.pageSize : this.pageCommons.pageSize,
-      sortBy: !sortBy ? this.pageCommons.sortBy : sortBy,
-    };
-    this.refreshDataSource.emit(paginator);
+  changePage(): void {
+    this.emitPage(buildSortBy(this.sort));
   }
 
-  openDialogCategory(actionType: ActionType, category: ICategoryDTO) {
-    this.openDialogCategoryEmitter.emit({
-      actionType: actionType,
-      body: category?.id,
+  changeSortBy(sort: Sort): void {
+    this.emitPage(buildSortBy(sort));
+  }
+
+  openForm(actionType: ActionType, category?: CategoryDTO): void {
+    this.openDialogCategory.emit({
+      actionType,
+      body: category?.id ?? '',
     });
   }
 
-  openDialogDeleteCategory(id: string) {
-    const dialogRef = this.dialogService.open(DeleteDialogComponent, {
-      width: '400px',
+  private emitPage(sortBy?: string): void {
+    this.refreshDataSource.emit({
+      pageIndex: this.paginator?.pageIndex ?? pageCommons.pageIndex,
+      pageSize: this.paginator?.pageSize || pageCommons.pageSize,
+      sortBy: sortBy || pageCommons.sortBy,
     });
-    dialogRef.afterClosed().subscribe((resp) => {
-      if (resp) {
-        this.delete(id);
-      }
-    });
-  }
-
-  delete(id: string) {
-    this.categoryService.deleteCategory(id).subscribe({
-      next: () => {
-        this.notificationService.notification(
-          'Deletado com sucesso',
-          ActionTypeNotification.SUCCESS
-        );
-        this.getCategories();
-      },
-    });
-  }
-
-   changePage() {
-    const sortBy = this.setSortBy(this.sort);
-    this.getCategories(sortBy);
-  }
-
-  setSortBy(sort: Sort) {
-    this.sort = sort;
-    return !sort.direction ? 'creationDate' : sort.active + ',' + sort.direction;
-  }
-
-  changeSortBy(sort: Sort) {
-    this.sort = sort;
-    const sortBy = this.setSortBy(sort);
-    this.getCategories(sortBy);
   }
 }

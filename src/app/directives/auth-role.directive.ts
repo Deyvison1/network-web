@@ -4,6 +4,7 @@ import { KeycloakService } from '../services/keycloak.service';
 
 @Directive({
   selector: '[appAuthRole]',
+  standalone: true,
 })
 export class AuthRoleDirective implements OnInit {
   private readonly el = inject(ElementRef);
@@ -12,10 +13,16 @@ export class AuthRoleDirective implements OnInit {
   readonly appAuthRole = input<string[]>();
 
   ngOnInit(): void {
-    const userRoles = this.keycloakService.getRoles();
     const allowedRoles = this.appAuthRole();
 
-    if (!allowedRoles?.some((role) => userRoles.includes(role))) {
+    if (!allowedRoles?.length) {
+      return;
+    }
+
+    const userRoles = this.keycloakService.getRoles();
+
+    const hasAccess = allowedRoles.some((role) => userRoles.includes(role));
+    if (!hasAccess) {
       this.el.nativeElement.remove();
     }
   }

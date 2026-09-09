@@ -1,102 +1,86 @@
 <mat-menu #menu="matMenu">
-  @for (item of itensMenu; track item) {
-    <button mat-menu-item (click)="item.function()">
-      <mat-icon>{{ item.icon }}</mat-icon>
-      <span>{{ item.label }}</span>
-    </button>
-  }
+  <button mat-menu-item (click)="openProfile()">
+    <mat-icon>account_circle</mat-icon>
+    <span>Perfil</span>
+  </button>
+  <button mat-menu-item (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    <span>Sair</span>
+  </button>
 </mat-menu>
 
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #drawer mode="over" class="sidenav">
-    @if (isLoggedIn) {
-      <h5 class="p-2 text-center mt-2">{{ nameApplication | titlecase }}</h5>
-      <mat-nav-list>
-        @for (item of itensMenuSideBar; track item) {
-          @if (!isSubmenuItem(item)) {
-            <button mat-menu-item (click)="item.function()">
-              <mat-icon [matTooltip]="item.tooltip">{{ item.icon }}</mat-icon>
-              <span>{{ item.label }}</span>
-            </button>
-          } @else {
-            <button mat-menu-item (click)="toggleSubmenu(item.label)">
-              <mat-icon [matTooltip]="item.tooltip">{{ item.icon }}</mat-icon>
-              <span>{{ item.label }}</span>
-              <mat-icon class="">
-                {{ isSubmenuOpen(item.label) ? "expand_less" : "expand_more" }}
-              </mat-icon>
-            </button>
+    <div class="sidenav-brand">
+      <span class="brand-mark">SN</span>
+      <div>
+        <strong>{{ nameApplication }}</strong>
+        <small>Painel administrativo</small>
+      </div>
+    </div>
 
-            @if (isSubmenuOpen(item.label)) {
-              <div class="submenu">
-                @for (sub of item.children; track sub) {
-                  <button mat-menu-item (click)="sub.function()">
-                    <mat-icon [matTooltip]="sub.tooltip">{{
-                      sub.icon
-                    }}</mat-icon>
-                    <span>{{ sub.label }}</span>
-                  </button>
-                }
-              </div>
-            }
-          }
+    @if (isLoggedIn) {
+      <nav class="sidenav-nav">
+        @for (item of menuItems; track item.path) {
+          <a
+            class="sidenav-link"
+            [routerLink]="item.path"
+            routerLinkActive="is-active"
+            [matTooltip]="item.tooltip"
+            (click)="closeDrawer()"
+          >
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <span>{{ item.label }}</span>
+          </a>
         }
-      </mat-nav-list>
+      </nav>
     }
   </mat-sidenav>
+
   <mat-sidenav-content>
-    <!-- Conteúdo principal -->
-    <div class="main-content">
-      <nav class="navbar navbar-light bg-light justify-content-between">
-        <div>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="topbar-left">
           @if (isLoggedIn) {
-            <mat-toolbar color="primary">
-              <button mat-icon-button (click)="drawer.toggle()">
-                <mat-icon>menu</mat-icon>
-              </button>
-              <h5 class="p-2">{{ nameApplication | titlecase }}</h5>
-            </mat-toolbar>
+            <button
+              mat-icon-button
+              class="menu-button"
+              aria-label="Abrir menu"
+              (click)="drawer.toggle()"
+            >
+              <mat-icon>menu</mat-icon>
+            </button>
+          }
+
+          <a class="brand" routerLink="/home">
+            <span class="brand-mark">SN</span>
+            <span class="brand-name">{{ nameApplication }}</span>
+          </a>
+        </div>
+
+        <div class="topbar-actions">
+          @if (!isLoggedIn) {
+            <button mat-flat-button color="primary" class="login-button" (click)="login()">
+              <mat-icon>login</mat-icon>
+              <span>Entrar</span>
+            </button>
+          } @else {
+            <a mat-stroked-button class="admin-button" routerLink="/product">
+              <mat-icon>admin_panel_settings</mat-icon>
+              <span>Área admin</span>
+            </a>
+
+            <button mat-flat-button class="profile-button" [matMenuTriggerFor]="menu">
+              <mat-icon>person</mat-icon>
+              {{ userName | titlecase }}
+            </button>
           }
         </div>
-        <div class="container">
-          <div>
-            @if (!isLoggedIn) {
-              <h4 class="font-weight-bold">
-                {{ nameApplication | uppercase }}
-              </h4>
-            }
-          </div>
-          <div>
-            @if (!isLoggedIn) {
-              <button mat-flat-button (click)="login()">
-                <mat-icon>login</mat-icon>
-                <span>Login</span>
-              </button>
-            } @else {
-              <div class="navbar-actions">
-                <button
-                  mat-stroked-button
-                  class="admin-button"
-                  matTooltip="Área administrativa" style="margin-right: 10px;" (click)="redirectionToUrl('product')"
-                >
-                  <mat-icon>admin_panel_settings</mat-icon>
-                  <span>Área Admin</span>
-                </button>
+      </div>
+    </header>
 
-                <button
-                  mat-flat-button
-                  class="profile-button"
-                  [matMenuTriggerFor]="menu"
-                >
-                  <mat-icon>emoji_people</mat-icon>
-                  {{ userName | titlecase }}
-                </button>
-              </div>
-            }
-          </div>
-        </div>
-      </nav>
+    <main class="main-content">
       <router-outlet />
-    </div>
+    </main>
   </mat-sidenav-content>
 </mat-sidenav-container>

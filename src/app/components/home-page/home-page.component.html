@@ -1,4 +1,15 @@
-<app-company-visualization
-  [aboutTheCompany]="aboutTheCompany"
-></app-company-visualization>
-<app-products [products]="products"></app-products>
+<section class="hero">
+  <div class="hero-inner">
+    <span class="hero-kicker">Internet 100% fibra óptica</span>
+    <h1>Velocidade, estabilidade e atendimento de verdade.</h1>
+    <p>
+      Planos pensados para sua casa, com Wi-Fi estável e instalação rápida.
+    </p>
+    <a class="hero-cta" href="#planos">Ver planos</a>
+  </div>
+</section>
+
+<app-company-visualization [aboutTheCompany]="aboutTheCompany"></app-company-visualization>
+<div id="planos">
+  <app-products [products]="products"></app-products>
+</div>

@@ -1,8 +1,27 @@
-<app-product-filter (searchEvent)="search($event)" (clearEvent)="clear()"></app-product-filter>
-<app-product-list
-  [totalItens]="totalItens"
-  (refreshDataSource)="getAllProducts($event)"
-  [setDataSource]="dataSource"
-  (openDialogProductEmitter)="openDialogProduct($event)"
-  (openDialogDeleteProductEmitter)="openDialogDeleteProduct($event)"
-></app-product-list>
+<section class="admin-page">
+  <header class="admin-page__header">
+    <div>
+      <span class="admin-page__kicker">Administração</span>
+      <h1>Produtos</h1>
+      <p>Cadastre e gerencie os planos oferecidos no site.</p>
+    </div>
+
+    <div class="admin-card__actions">
+      <button type="submit" class="btn btn-primary" form="product-filter-form" (click)="openNewProduct()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <app-product-filter
+    (searchEvent)="search($event)"
+    (clearEvent)="clear()"
+  ></app-product-filter>
+  <app-product-list
+    [totalItens]="totalItens"
+    [setDataSource]="dataSource"
+    (refreshDataSource)="getAllProducts($event)"
+    (openDialogProductEmitter)="openDialogProduct($event)"
+    (openDialogDeleteProductEmitter)="openDialogDeleteProduct($event)"
+  ></app-product-list>
+</section>
